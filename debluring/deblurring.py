@@ -15,12 +15,26 @@ of the point-spread function.
 """
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image
 
 import pylops
 
 ###############################################################################
 # Let's start by importing a 2d image and defining the blurring operator
+
+def get_image_from_png(image_path):
+    im = Image.open(image_path)
+    im = np.array(im)
+    return im
+
+def get_image_from_npy(image_path):
+    im = np.load(image_path)
+    return im[::5, ::5, 0]
+
+im = get_image_from_png(image_path="python.png")
+# im = get_image_from_npy(image_path="python.npy")
 im = np.load("python.npy")[::5, ::5, 0]
+print(f"image shape: {im.shape}")
 
 Nz, Nx = im.shape
 
@@ -31,6 +45,7 @@ hx = np.exp(-0.03 * np.linspace(-(nh[1] // 2), nh[1] // 2, nh[1]) ** 2)
 hz /= np.trapz(hz)  # normalize the integral to 1
 hx /= np.trapz(hx)  # normalize the integral to 1
 h = hz[:, np.newaxis] * hx[np.newaxis, :]
+print(h.shape) # h.shape: (15, 25)
 
 fig, ax = plt.subplots(1, 1, figsize=(5, 3))
 him = ax.imshow(h)
@@ -49,13 +64,17 @@ Cop = pylops.signalprocessing.Convolve2D(
 # regularization, the deblurred image will show some ringing due to the
 # instabilities of the inverse process. Using a L1 solver with a DWT
 # preconditioner or TV regularization allows to recover sharper contrasts.
-imblur = Cop * im
 
+# Get Blured image
+imblur = Cop * im   #im: image d'origine et imblur l'image flouté
+
+# Get deblured image
 imdeblur = pylops.optimization.leastsquares.normal_equations_inversion(
     Cop, imblur.ravel(), None, maxiter=50  # solvers need 1D arrays
 )[0]
 imdeblur = imdeblur.reshape(Cop.dims)
 
+# Get FISTA image
 Wop = pylops.signalprocessing.DWT2D((Nz, Nx), wavelet="haar", level=3)
 Dop = [
     pylops.FirstDerivative((Nz, Nx), axis=0, edge=False),
