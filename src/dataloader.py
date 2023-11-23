@@ -94,7 +94,7 @@ class GrayImage:
 
 if __name__ == '__main__':
     # image_path = os.path.join('..', 'debluring', 'python.png')
-    image_path = os.path.join('..', 'data', '01.png')
+    image_path = os.path.join('..', 'testset', '01.png')
     image = GrayImage(image_path=image_path, hdim=(10, 10))
     image.plot()
     image.plot_blured()
