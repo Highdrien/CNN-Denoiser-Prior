@@ -1,7 +1,8 @@
 import torch.nn as nn
-from torch import Tensor, rand
+from torch import Tensor, rand, device
+from easydict import EasyDict
 
-from typing import Optional
+from typing import Optional, List
 from icecream import ic
 
 
@@ -41,9 +42,10 @@ class Block(nn.Module):
 class CNN(nn.Module):
     def __init__(self,
                  channels: int,
-                 image_size: int) -> None:
+                 image_size: int,
+                 dilitation: Optional[List[int]]=[1, 2, 3, 4, 3, 2, 1]
+                 ) -> None:
         super().__init__()
-        dilitation = [1, 2, 3, 4, 3, 2, 1]
 
         first_block = Block(dilatation=dilitation[0],
                             image_size=image_size,
@@ -72,6 +74,17 @@ class CNN(nn.Module):
             x = block(x)
         return x
 
+
+def get_model(config: EasyDict) -> CNN:
+    model = CNN(channels=3,
+                image_size=config.data.image_size,
+                dilitation=config.model.dilitation)
+    return model
+
+
+def check_device(model: nn.Module) -> None:
+    for param in model.parameters():
+        ic(param.device)
 
 
 if __name__ == "__main__":

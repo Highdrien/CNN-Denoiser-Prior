@@ -4,9 +4,10 @@ import numpy as np
 from PIL import Image
 from torch import Tensor
 from torch.utils.data import Dataset, DataLoader
+from easydict import EasyDict
 
-from typing import Optional, Tuple, Callable
-from utils import blurring_gaussian_operator, get_conv2D, plot_image_and_blured
+from typing import Optional, Tuple
+from src.utils import blurring_gaussian_operator, get_conv2D, plot_image_and_blured
 
 np.random.seed(0)
 torch.manual_seed(0)
@@ -26,9 +27,6 @@ def split_data(mode: str,
     if mode == 'test':
         return (split_1, num_data)
 
-
-def duplique(func: Callable[..., float]) -> Tuple[float, float]:
-    pass
 
 class DataGenerator(Dataset):
     """
@@ -92,21 +90,20 @@ class DataGenerator(Dataset):
             blured_image.append(cop * image[channel])
         blured_image = np.array(blured_image)
 
-        image = torch.from_numpy(image).to(torch.float32)
+        image = torch.from_numpy(image).to(torch.float64)
         blured_image = torch.from_numpy(blured_image) + torch.randn(*self.image_size) * self.noise
 
         return blured_image, image
 
-def create_generator(mode: str,
-                     data_path: str,
-                     batch_size: int,
-                     image_shape: Optional[Tuple[int, int, int]]=(3, 256, 256),
-                     shuffle: Optional[bool]=True,
-                     drop_last: Optional[bool]=True
-                     ) -> DataLoader:
+def create_generator(mode: str, config: EasyDict) -> DataLoader:
     """ Returns DataLoader of a generator on mode ('train','val','test')"""
-    generator = DataGenerator(mode=mode, data_path=data_path, image_shape=image_shape)
-    dataloader = DataLoader(generator, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last)
+    generator = DataGenerator(mode=mode,
+                              data_path=config.data.path,
+                              image_size=(3, config.data.image_size, config.data.image_size))
+    dataloader = DataLoader(generator,
+                            batch_size=config.learning.batch_size,
+                            shuffle=config.learning.shuffle,
+                            drop_last=config.learning.drop_last)
     return dataloader
 
 
