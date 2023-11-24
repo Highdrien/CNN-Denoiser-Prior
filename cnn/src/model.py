@@ -1,6 +1,7 @@
 import torch.nn as nn
-from torch import Tensor, rand, device
+from torch import Tensor, rand, double
 from easydict import EasyDict
+from numpy import prod
 
 from typing import Optional, List
 from icecream import ic
@@ -25,7 +26,7 @@ class Block(nn.Module):
         self.run_batchnorm = run_batchnorm
         self.run_relu = run_relu
         if self.run_batchnorm:
-            self.batchnorm = nn.BatchNorm1d(image_size)
+            self.batchnorm = nn.BatchNorm2d(out_channels)
         if self.run_relu:
             self.run_relu = run_relu
         self.relu = nn.ReLU(inplace=True)
@@ -74,23 +75,32 @@ class CNN(nn.Module):
             x = block(x)
         return x
 
+    def check_param(self) -> None:
+        for param in self.parameters():
+            ic(param.device, param.dtype)
+    
+    def get_number_parameters(self) -> int:
+        return sum([prod(param.size()) for param in self.parameters()])
+
+
 
 def get_model(config: EasyDict) -> CNN:
     model = CNN(channels=3,
                 image_size=config.data.image_size,
                 dilitation=config.model.dilitation)
+    model.to(double)
     return model
 
 
 def check_device(model: nn.Module) -> None:
     for param in model.parameters():
-        ic(param.device)
+        ic(param.device, param.dtype)
 
 
 if __name__ == "__main__":
     model = CNN(channels=3, image_size=16)
     ic(model)
     
-    x = rand((3, 16, 16))
+    x = rand((64, 3, 16, 16))
     y = model(x)
     print(f"output shape: {y.shape}")

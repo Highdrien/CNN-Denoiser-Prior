@@ -90,7 +90,7 @@ class DataGenerator(Dataset):
             blured_image.append(cop * image[channel])
         blured_image = np.array(blured_image)
 
-        image = torch.from_numpy(image).to(torch.float64)
+        image = torch.from_numpy(image).to(torch.double)
         blured_image = torch.from_numpy(blured_image) + torch.randn(*self.image_size) * self.noise
 
         return blured_image, image

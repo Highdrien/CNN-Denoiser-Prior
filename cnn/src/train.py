@@ -29,9 +29,9 @@ def train(config: EasyDict) -> None:
 
     # Get model
     model = get_model(config)
-    model.to(device)
+    model = model.to(device)
     ic(model)
-    check_device(model)
+    ic(model.get_number_parameters())
     
     # Loss
     assert config.learning.loss == 'crossentropy', NotImplementedError
@@ -66,16 +66,15 @@ def train(config: EasyDict) -> None:
         # Training
         for x, y_true in train_range:
             
-            ic(device)
-            x.to(device)
-            y_true.to(device)
-            ic(x.shape, x.device, x.dtype)
-            ic(y_true.shape, y_true.device, y_true.dtype)
+            # ic(device)
+            x = x.to(device)
+            y_true = y_true.to(device)
+            # ic(x.shape, x.device, x.dtype)
+            # ic(y_true.shape, y_true.device, y_true.dtype)
 
             y_pred = model.forward(x)
 
-            ic(y_pred.shape, y_pred.device, y_pred.dtype)
-            exit()
+            # ic(y_pred.shape, y_pred.device, y_pred.dtype)
                 
             loss = criterion(y_pred, y_true)
 

@@ -1,5 +1,5 @@
 name: experiment
-save_experiment: False
+save_experiment: true
 
 # data options
 data: 
@@ -17,8 +17,8 @@ learning:
   learning_rate: 0.01         # learning rate
   milesstone: [5, 15]         # gradient decay at epoch 5 and 15
   gamma: 0.1                  # learning rate will be multiplicate by 0.1 at epochs 5 and 15
-  epochs: 30                  # number of epochs
-  batch_size: 4               # batch size
+  epochs: 2                   # number of epochs
+  batch_size: 16              # batch size
   save_learning_curves: true  # save the learning curves at the end of experiements
   shuffle: true               # shuffle the data
   drop_last: true             # drop last batch (in order to have the same size at the end)
