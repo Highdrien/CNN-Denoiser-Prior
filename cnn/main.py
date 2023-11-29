@@ -6,9 +6,7 @@ from icecream import ic
 from typing import Optional
 
 from src.train import train
-from src.dataloader import create_generator
-from utils.bluring import plot_image_and_blured
-
+from src.dataloader import create_generator, plot_image_and_blured
 
 
 def load_config(path: Optional[str]='configs/config.yaml') -> EasyDict:
@@ -47,7 +45,8 @@ def main(options: dict) -> None:
         print(f"len(val_generator): {len(generator)}")
         for x, y in generator:
             x, y = x[0], y[0]
-            plot_image_and_blured(image=y, blured_image=x)  
+            plot_image_and_blured(image=y, blured_image=x)
+            break  
 
 
 if __name__ == "__main__":

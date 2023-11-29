@@ -1,13 +1,16 @@
 import os
 import torch
 import numpy as np
+import matplotlib.pyplot as plt
+
 from PIL import Image
 from torch import Tensor
-from torch.utils.data import Dataset, DataLoader
 from easydict import EasyDict
-
 from typing import Optional, Tuple
-from utils.bluring import blurring_gaussian_operator, get_conv2D, plot_image_and_blured
+
+from torch import Tensor
+from torch.utils.data import Dataset, DataLoader
+
 
 np.random.seed(0)
 torch.manual_seed(0)
@@ -36,8 +39,7 @@ class DataGenerator(Dataset):
                  mode: str,
                  data_path: str,
                  image_size: Tuple[int, int, int],
-                 hstd: Optional[float]=0.1,
-                 noise: Optional[float]=0.02
+                 noise_variance: float
                  ) -> None:
         """ create a generator with:
         mode in train, val, test
@@ -59,12 +61,7 @@ class DataGenerator(Dataset):
         self.data = list(map(get_complete_path, all_path[begin:end]))
         print(f"number of data in the generator: {len(self)}")
 
-        self.hdim_range = [2, 4, 6, 8, 10]
-        self.generate_hdim = lambda : np.random.choice(self.hdim_range)
-        self.generate_hsigma = lambda : abs(np.random.normal(loc=0, scale=hstd))
-        self.duplicate = lambda x: (x, x)
-        self.noise = noise
-
+        self.noise_variance = noise_variance
 
     def __len__(self) -> int:
         return len(self.data)
@@ -79,33 +76,46 @@ class DataGenerator(Dataset):
         image = np.transpose(image, (2, 0, 1))
         assert image.shape == self.image_size, f"Error, image was load with a wrong shape. Expected: {self.image_size} but found {image.shape}"
 
-        # Generate blurring gaussian operator
-        h = blurring_gaussian_operator(hdim=self.duplicate(self.generate_hdim()),
-                                       hsigma=self.duplicate(self.generate_hsigma()))
-        cop = get_conv2D(image_shape=self.image_size[1:], blurring_operator=h)
-
-        # blur image
-        blured_image = []
-        for channel in range(self.image_size[0]):
-            blured_image.append(cop * image[channel])
-        blured_image = np.array(blured_image)
-
         image = torch.from_numpy(image).to(torch.float32)
-        blured_image = torch.from_numpy(blured_image) + torch.randn(*self.image_size) * self.noise
-        blured_image = blured_image.to(torch.float32)
-
+        blured_image = image + torch.randn_like(image) * self.noise_variance
         return blured_image, image
+
 
 def create_generator(mode: str, config: EasyDict) -> DataLoader:
     """ Returns DataLoader of a generator on mode ('train','val','test')"""
     generator = DataGenerator(mode=mode,
                               data_path=config.data.path,
-                              image_size=(3, config.data.image_size, config.data.image_size))
+                              image_size=(3, config.data.image_size, config.data.image_size),
+                              noise_variance=config.data.noise_variance)
     dataloader = DataLoader(generator,
                             batch_size=config.learning.batch_size,
                             shuffle=config.learning.shuffle,
                             drop_last=config.learning.drop_last)
     return dataloader
+
+
+
+def plot_image_and_blured(image: Tensor, blured_image: Tensor) -> None:
+    """ plot HR image and the blured image """
+    def pre_process(x: Tensor) -> Tensor:
+        if x.dtype != torch.uint8:
+            x = x.to(torch.uint8)
+        if x.shape[0] == 3:
+            x = x.permute(1, 2, 0)
+        return x
+    
+    image = pre_process(image)
+    blured_image = pre_process(blured_image)
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(image)
+    plt.title('Image')
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(blured_image)
+    plt.title('Blured Image')
+
+    plt.show()
 
 
 if __name__ == "__main__":

@@ -47,7 +47,7 @@ class CNN(nn.Module):
                  image_size: int,
                  dilitation: Optional[List[int]]=[1, 2, 3, 4, 3, 2, 1]
                  ) -> None:
-        super().__init__()
+        super(CNN, self).__init__()
 
         first_block = Block(dilatation=dilitation[0],
                             image_size=image_size,

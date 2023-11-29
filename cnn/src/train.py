@@ -1,7 +1,7 @@
+import os
 import torch
 from torch.optim.lr_scheduler import MultiStepLR
 from tqdm import tqdm
-# import numpy as np
 import time
 from easydict import EasyDict
 from icecream import ic
@@ -31,12 +31,11 @@ def train(config: EasyDict) -> None:
     model = get_model(config)
     model = model.to(device)
     ic(model)
-    model.check_param()
     ic(model.get_number_parameters())
     
     # Loss
     assert config.learning.loss == 'crossentropy', NotImplementedError
-    criterion = torch.nn.CrossEntropyLoss(reduction='mean')
+    criterion = torch.nn.MSELoss(reduction='mean')
 
     # Optimizer and Scheduler
     assert config.learning.optimizer == 'adam', NotImplementedError
@@ -67,20 +66,12 @@ def train(config: EasyDict) -> None:
         # Training
         for x, y_true in train_range:
             
-            # ic(device)
-            ic(x.dtype)
             x = x.to(device)
             y_true = y_true.to(device)
-            ic(x.shape, x.device, x.dtype)
-            ic(y_true.shape, y_true.device, y_true.dtype)
 
             y_pred = model.forward(x)
-
-            # ic(y_pred.shape, y_pred.device, y_pred.dtype)
                 
             loss = criterion(y_pred, y_true)
-
-            y_pred = torch.nn.functional.softmax(y_pred, dim=1)
 
             train_loss += loss.item()
             # train_metrics += compute_metrics(config, y_true, y_pred)
@@ -104,14 +95,14 @@ def train(config: EasyDict) -> None:
         with torch.no_grad():
             
             for x, y_true in val_range:
-                x.to(device)
-                y_true.to(device)
+                x = x.to(device)
+                y_true = y_true.to(device)
 
                 y_pred = model.forward(x)
                     
                 loss = criterion(y_pred, y_true)
 
-                y_pred = torch.nn.functional.softmax(y_pred, dim=1)
+                # y_pred = torch.nn.functional.softmax(y_pred, dim=1)
                 
                 val_loss += loss.item()
                 # val_metrics += compute_metrics(config, y_true, y_pred)
@@ -137,10 +128,12 @@ def train(config: EasyDict) -> None:
                               train_metrics=[], 
                               val_metrics=[])
             
-            if config.model.save_checkpoint != False and val_loss < best_val_loss:
+            if config.learning.save_checkpoint and val_loss < best_val_loss:
                 print('save model weights')
-                model.save(logging_path)
+                torch.save(model.state_dict(), os.path.join(logging_path, 'checkpoint.pt'))
                 best_val_loss = val_loss
+        
+        ic(best_val_loss)
 
         print_loss_and_metrics(train_loss=train_loss,
                                val_loss=val_loss,

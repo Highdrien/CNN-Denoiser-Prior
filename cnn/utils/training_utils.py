@@ -12,9 +12,8 @@ def print_loss_and_metrics(train_loss: float,
     """ print loss and metrics for train and validation """
     print(f"{train_loss = }")
     print(f"{val_loss = }")
-    for i in range(len(metrics_name) - 1):
+    for i in range(len(metrics_name)):
         print(f"{metrics_name[i]} -> train: {train_metrics[i]:.3f}   val:{val_metrics[i]:.3f}")
-    print(f"{metrics_name[-1]} -> train: {np.exp(train_metrics[-1]):.2e}   val:{np.exp(val_metrics[-1]):.2e}")
 
 
 def save_learning_curves(path: str) -> None:

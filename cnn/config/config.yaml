@@ -1,14 +1,15 @@
-name: experiment
+name: litle_model
 save_experiment: true
 
 # data options
 data: 
-  path: 'data\center_patches'
+  path: 'data\all_patches'
   image_size: 256
+  noise_variance: 10
 
 # model options
 model:
-  dilitation: [1, 2, 3, 4, 3, 2, 1]
+  dilitation: [1, 2, 3, 2, 1]
 
 # learning options
 learning:
@@ -23,4 +24,4 @@ learning:
   shuffle: true               # shuffle the data
   drop_last: true             # drop last batch (in order to have the same size at the end)
   device: cuda                # device: if device=cuda: cuda if available, other wise cpu
-
+  save_checkpoint: true       # save model weigth during learning (best only according to the validation loss)

@@ -1,15 +1,16 @@
-config_metadata: 'Saving time : 11/27/2023, 13:52:07'
-name: 'experiment'
+config_metadata: 'Saving time : 11/29/2023, 17:15:30'
+name: 'litle_model_center'
 save_experiment: true
 
 # data options
 data:
     path: 'data\center_patches'
     image_size: 256
+    noise_variance: 10
 
 # model options
 model:
-    dilitation: [1, 2, 3, 4, 3, 2, 1]
+    dilitation: [1, 2, 3, 2, 1]
 
 # learning options
 learning:
@@ -24,3 +25,4 @@ learning:
     shuffle: true
     drop_last: true
     device: 'cuda'
+    save_checkpoint: true
