@@ -7,7 +7,7 @@ from typing import Optional
 
 from src.train import train
 from src.dataloader import create_generator
-from src.utils import plot_image_and_blured
+from utils.bluring import plot_image_and_blured
 
 
 

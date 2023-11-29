@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 from easydict import EasyDict
 
 from typing import Optional, Tuple
-from src.utils import blurring_gaussian_operator, get_conv2D, plot_image_and_blured
+from utils.bluring import blurring_gaussian_operator, get_conv2D, plot_image_and_blured
 
 np.random.seed(0)
 torch.manual_seed(0)
@@ -90,8 +90,9 @@ class DataGenerator(Dataset):
             blured_image.append(cop * image[channel])
         blured_image = np.array(blured_image)
 
-        image = torch.from_numpy(image).to(torch.double)
+        image = torch.from_numpy(image).to(torch.float32)
         blured_image = torch.from_numpy(blured_image) + torch.randn(*self.image_size) * self.noise
+        blured_image = blured_image.to(torch.float32)
 
         return blured_image, image
 

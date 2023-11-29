@@ -7,8 +7,8 @@ from easydict import EasyDict
 from icecream import ic
 
 from src.dataloader import create_generator
-from src.model import get_model, check_device
-from src.utils import print_loss_and_metrics, save_learning_curves
+from src.model import get_model
+from utils.training_utils import print_loss_and_metrics, save_learning_curves
 from config.config import train_logger, train_step_logger
 
 
@@ -31,6 +31,7 @@ def train(config: EasyDict) -> None:
     model = get_model(config)
     model = model.to(device)
     ic(model)
+    model.check_param()
     ic(model.get_number_parameters())
     
     # Loss
@@ -67,10 +68,11 @@ def train(config: EasyDict) -> None:
         for x, y_true in train_range:
             
             # ic(device)
+            ic(x.dtype)
             x = x.to(device)
             y_true = y_true.to(device)
-            # ic(x.shape, x.device, x.dtype)
-            # ic(y_true.shape, y_true.device, y_true.dtype)
+            ic(x.shape, x.device, x.dtype)
+            ic(y_true.shape, y_true.device, y_true.dtype)
 
             y_pred = model.forward(x)
 

@@ -1,5 +1,6 @@
 import torch.nn as nn
-from torch import Tensor, rand, double
+import torch
+from torch import Tensor
 from easydict import EasyDict
 from numpy import prod
 
@@ -76,31 +77,28 @@ class CNN(nn.Module):
         return x
 
     def check_param(self) -> None:
+        """ check all param state """
         for param in self.parameters():
             ic(param.device, param.dtype)
     
     def get_number_parameters(self) -> int:
+        """ return the number of parameters of the model """
         return sum([prod(param.size()) for param in self.parameters()])
 
 
-
 def get_model(config: EasyDict) -> CNN:
+    """ get the model according to a configuration """
     model = CNN(channels=3,
                 image_size=config.data.image_size,
                 dilitation=config.model.dilitation)
-    model.to(double)
+    model.to(torch.float32)
     return model
-
-
-def check_device(model: nn.Module) -> None:
-    for param in model.parameters():
-        ic(param.device, param.dtype)
 
 
 if __name__ == "__main__":
     model = CNN(channels=3, image_size=16)
     ic(model)
     
-    x = rand((64, 3, 16, 16))
+    x = torch.rand((64, 3, 16, 16))
     y = model(x)
     print(f"output shape: {y.shape}")

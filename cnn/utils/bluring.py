@@ -1,6 +1,5 @@
-import os
 import numpy as np
-from typing import Tuple, List
+from typing import Tuple
 import matplotlib.pyplot as plt
 from torch import Tensor, uint8
 
@@ -56,46 +55,3 @@ def plot_image_and_blured(image: Tensor, blured_image: Tensor) -> None:
     plt.title('Blured Image')
 
     plt.show()
-
-
-def print_loss_and_metrics(train_loss: float,
-                           val_loss: float,
-                           metrics_name: List[str],
-                           train_metrics: List[float],
-                           val_metrics: List[float]) -> None:
-    """ print loss and metrics for train and validation """
-    print(f"{train_loss = }")
-    print(f"{val_loss = }")
-    for i in range(len(metrics_name) - 1):
-        print(f"{metrics_name[i]} -> train: {train_metrics[i]:.3f}   val:{val_metrics[i]:.3f}")
-    print(f"{metrics_name[-1]} -> train: {np.exp(train_metrics[-1]):.2e}   val:{np.exp(val_metrics[-1]):.2e}")
-
-
-def save_learning_curves(path: str) -> None:
-    result, names = get_result(path)
-
-    epochs = result[:, 0]
-    for i in range(1, len(names), 2):
-        train_metrics = result[:, i]
-        val_metrics = result[:, i + 1]
-        plt.plot(epochs, train_metrics)
-        plt.plot(epochs, val_metrics)
-        plt.title(names[i])
-        plt.xlabel('epoch')
-        plt.ylabel(names[i])
-        plt.legend(names[i:])
-        plt.grid()
-        plt.savefig(os.path.join(path, names[i] + '.png'))
-        plt.close()
-
-
-def get_result(path: str) -> Tuple[List[float], List[str]]:
-    with open(os.path.join(path, 'train_log.csv'), 'r') as f:
-        names = f.readline()[:-1].split(',')
-        result = []
-        for line in f:
-            result.append(line[:-1].split(','))
-
-        result = np.array(result, dtype=float)
-    f.close()
-    return result, names

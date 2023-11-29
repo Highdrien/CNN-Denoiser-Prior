@@ -1,0 +1,26 @@
+config_metadata: 'Saving time : 11/27/2023, 13:52:07'
+name: 'experiment'
+save_experiment: true
+
+# data options
+data:
+    path: 'data\center_patches'
+    image_size: 256
+
+# model options
+model:
+    dilitation: [1, 2, 3, 4, 3, 2, 1]
+
+# learning options
+learning:
+    loss: 'crossentropy'
+    optimizer: 'adam'
+    learning_rate: 0.01
+    milesstone: [5, 15]
+    gamma: 0.1
+    epochs: 2
+    batch_size: 16
+    save_learning_curves: true
+    shuffle: true
+    drop_last: true
+    device: 'cuda'
