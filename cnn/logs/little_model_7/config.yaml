@@ -1,10 +1,10 @@
-config_metadata: 'Saving time : 11/29/2023, 17:15:30'
-name: 'litle_model_center'
+config_metadata: 'Saving time : 11/30/2023, 10:32:44'
+name: 'litle_model'
 save_experiment: true
 
 # data options
 data:
-    path: 'data\center_patches'
+    path: 'data/all_patches'
     image_size: 256
     noise_variance: 10
 
@@ -14,12 +14,12 @@ model:
 
 # learning options
 learning:
-    loss: 'crossentropy'
+    loss: 'mse'
     optimizer: 'adam'
     learning_rate: 0.01
     milesstone: [5, 15]
     gamma: 0.1
-    epochs: 2
+    epochs: 30
     batch_size: 16
     save_learning_curves: true
     shuffle: true
