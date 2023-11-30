@@ -6,6 +6,7 @@ from icecream import ic
 from typing import Optional
 
 from src.train import train
+from src.test import test
 from src.dataloader import create_generator, plot_image_and_blured
 
 
@@ -28,7 +29,7 @@ def find_config(experiment_path: str) -> str:
     
     exit()
 
-IMPLEMENTED = ['train', 'data']
+IMPLEMENTED = ['train', 'data', 'test']
 
 def main(options: dict) -> None:
 
@@ -39,7 +40,7 @@ def main(options: dict) -> None:
         ic(config)
         train(config)
     
-    elif options['mode'] == 'data':
+    if options['mode'] == 'data':
         config = load_config(options['config_path'])
         generator = create_generator(mode='val', config=config)
         print(f"len(val_generator): {len(generator)}")
@@ -47,6 +48,13 @@ def main(options: dict) -> None:
             x, y = x[0], y[0]
             plot_image_and_blured(image=y, blured_image=x)
             break  
+    
+    if options['mode'] == 'test':
+        assert options['path'] is not None, 'Error, please enter the path of your experimentation that you want to test'
+        config_path = find_config(experiment_path=options['path'])
+        config = load_config(config_path)
+        ic(config)
+        test(config=config, logging_path=options['path'])
 
 
 if __name__ == "__main__":

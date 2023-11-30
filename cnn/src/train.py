@@ -34,7 +34,7 @@ def train(config: EasyDict) -> None:
     ic(model.get_number_parameters())
     
     # Loss
-    assert config.learning.loss == 'crossentropy', NotImplementedError
+    assert config.learning.loss == 'mse', NotImplementedError
     criterion = torch.nn.MSELoss(reduction='mean')
 
     # Optimizer and Scheduler

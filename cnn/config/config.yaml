@@ -1,4 +1,4 @@
-name: litle_model
+name: little_model
 save_experiment: true
 
 # data options
@@ -13,12 +13,12 @@ model:
 
 # learning options
 learning:
-  loss: crossentropy          # name of loss. Can be crossentropy or PerplexiteLoss
-  optimizer: adam             # optimizer. Only adam was implemented
+  loss: mse                   # name of loss. Only MSE is implemeted
+  optimizer: adam             # optimizer. Only adam is implemented
   learning_rate: 0.01         # learning rate
   milesstone: [5, 15]         # gradient decay at epoch 5 and 15
   gamma: 0.1                  # learning rate will be multiplicate by 0.1 at epochs 5 and 15
-  epochs: 2                   # number of epochs
+  epochs: 30                  # number of epochs
   batch_size: 16              # batch size
   save_learning_curves: true  # save the learning curves at the end of experiements
   shuffle: true               # shuffle the data
