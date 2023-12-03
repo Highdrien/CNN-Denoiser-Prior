@@ -10,7 +10,7 @@ from src.test import test
 from src.dataloader import create_generator, plot_image_and_blured
 
 
-def load_config(path: Optional[str]='configs/config.yaml') -> EasyDict:
+def load_config(path: Optional[str]='config/config.yaml') -> EasyDict:
     stream = open(path, 'r')
     return EasyDict(yaml.safe_load(stream))
 
