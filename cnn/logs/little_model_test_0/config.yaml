@@ -1,0 +1,33 @@
+config_metadata: 'Saving time : 12/03/2023, 16:21:36'
+name: 'little_model_test'
+save_experiment: true
+
+# data options
+data:
+    path: 'data\center_patches'
+    image_size: 256
+    noise_variance: 10
+
+# model options
+model:
+    dilitation: [1, 2, 3, 2, 1]
+
+# learning options
+learning:
+    loss: 'mse'
+    optimizer: 'adam'
+    learning_rate: 0.01
+    milesstone: [5, 15]
+    gamma: 0.1
+    epochs: 4
+    batch_size: 16
+    save_learning_curves: true
+    shuffle: true
+    drop_last: true
+    device: 'cuda'
+    save_checkpoint: true
+
+# metrics options
+metrics:
+    PSNR: true
+    MSSSIM: true
