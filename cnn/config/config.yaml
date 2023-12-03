@@ -1,9 +1,9 @@
-name: little_model
+name: little_model_test
 save_experiment: true
 
 # data options
 data: 
-  path: 'data\all_patches'
+  path: 'data\center_patches'
   image_size: 256
   noise_variance: 10
 
@@ -18,10 +18,15 @@ learning:
   learning_rate: 0.01         # learning rate
   milesstone: [5, 15]         # gradient decay at epoch 5 and 15
   gamma: 0.1                  # learning rate will be multiplicate by 0.1 at epochs 5 and 15
-  epochs: 30                  # number of epochs
+  epochs: 2                   # number of epochs
   batch_size: 16              # batch size
   save_learning_curves: true  # save the learning curves at the end of experiements
   shuffle: true               # shuffle the data
   drop_last: true             # drop last batch (in order to have the same size at the end)
   device: cuda                # device: if device=cuda: cuda if available, other wise cpu
   save_checkpoint: true       # save model weigth during learning (best only according to the validation loss)
+
+# metrics
+metrics:
+  PSNR: true
+  MSSSIM: true

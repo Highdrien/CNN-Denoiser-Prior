@@ -52,7 +52,7 @@ def train_logger(config: EasyDict) -> str:
     return path
 
 
-def config_to_yaml(config: Dict, space: str='') -> str:
+def config_to_yaml(config: dict, space: str='') -> str:
     """
     transforms a dictionary (config) into a yaml line sequence
     """
