@@ -7,6 +7,8 @@ Analyse de l'article: Learning Deep CNN Denoiser Prior for Image Restoration
 - [Background](#background)
   - [Image Restoration with Denoiser Prior](#image-restoration-with-denoiser-prior)
   - [Half Quadratic Splitting (HQS) Method](#half-quadratic-splitting-hqs-method)
+    - [Résolution de 6a (hors papier)](#résolution-de-6a-hors-papier)
+    - [Suite du papier](#suite-du-papier)
 - [Learning Deep CNN Denoiser Prior](#learning-deep-cnn-denoiser-prior)
   - [Why Choose CNN Denoiser?](#why-choose-cnn-denoiser)
   - [The Proposed CNN Denoiser](#the-proposed-cnn-denoiser)
@@ -83,6 +85,20 @@ En fait l'équation (6a) peut être résolue directement par:
 $$ x_{k+1} = (H^T H + \mu I)^{-1} (H^T y + \mu z_k) \quad (7)$$
 
 > Annulation du gradient de l'équation (6a)
+
+> En fait dans les fait, l'équation (7) est réalisable seulement si H est petit. Dans notre cas, c'est pas le mieux.
+
+### Résolution de 6a (hors papier)
+
+On veux minimizer (6a). On calcule alors le gradient et on l'annule avec $z_k$ fixé:
+$$-2H^T(y-Hx)+2\mu(x-z_k)=0$$
+$$\Leftrightarrow Gx=u$$
+où $G=H^TH+\mu I$ et $u=H^Ty+\mu z_k$. L'idée est de ne pas inverser $G$ mais d'utiliser une méthode d'approximation pour trouver $x$.
+
+**Autre idée**: Utiliser fourier (en disans que $H$ est une convolution) et avoir:
+$$(H^TH+\mu I)^{-1}x \leftrightarrow (|H(\xi)|^2+\mu)^{-1}X(\xi)$$
+
+### Suite du papier
 
 Et on peux ré-écrire l'équation (6b) comme ceci (c'est seulement une division par $\lambda$):
 $$ z_{k+1} = \text{arg} \min_z \frac{1}{2(\sqrt{\lambda / \mu})^2} ||x_{k+1}-z||^2 + \Phi(z) \quad (8) $$
