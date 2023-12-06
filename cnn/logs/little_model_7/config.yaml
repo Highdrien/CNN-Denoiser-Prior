@@ -7,6 +7,7 @@ data:
     path: 'data/all_patches'
     image_size: 256
     noise_variance: 10
+    random_variance: false
 
 # model options
 model:

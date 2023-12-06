@@ -5,7 +5,8 @@ save_experiment: true
 data: 
   path: 'data\center_patches'
   image_size: 256
-  noise_variance: 10
+  noise_variance: 50
+  random_variance: true
 
 # model options
 model:

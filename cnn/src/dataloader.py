@@ -39,7 +39,8 @@ class DataGenerator(Dataset):
                  mode: str,
                  data_path: str,
                  image_size: Tuple[int, int, int],
-                 noise_variance: float
+                 noise_variance: float,
+                 random_variance: bool
                  ) -> None:
         """ create a generator with:
         mode in train, val, test
@@ -62,6 +63,7 @@ class DataGenerator(Dataset):
         print(f"number of data in the generator: {len(self)}")
 
         self.noise_variance = noise_variance
+        self.random_variance = random_variance
 
     def __len__(self) -> int:
         return len(self.data)
@@ -77,7 +79,8 @@ class DataGenerator(Dataset):
         assert image.shape == self.image_size, f"Error, image was load with a wrong shape. Expected: {self.image_size} but found {image.shape}"
 
         image = torch.from_numpy(image).to(torch.float32)
-        blured_image = image + torch.randn_like(image) * self.noise_variance
+        noise_variance = np.random.randint(self.noise_variance) if self.random_variance else self.noise_variance
+        blured_image = image + torch.randn_like(image) * noise_variance
         return blured_image, image
 
 
@@ -86,7 +89,8 @@ def create_generator(mode: str, config: EasyDict) -> DataLoader:
     generator = DataGenerator(mode=mode,
                               data_path=config.data.path,
                               image_size=(3, config.data.image_size, config.data.image_size),
-                              noise_variance=config.data.noise_variance)
+                              noise_variance=config.data.noise_variance,
+                              random_variance=config.data.random_variance)
     dataloader = DataLoader(generator,
                             batch_size=config.learning.batch_size,
                             shuffle=config.learning.shuffle,
