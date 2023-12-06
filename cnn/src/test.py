@@ -46,6 +46,7 @@ def test(config: EasyDict, logging_path: str) -> None:
     test_loss = 0
     test_range = tqdm(test_generator)
     test_metrics = np.zeros(num_metrics)
+    noise_metrics = np.zeros(num_metrics + 1)
 
     with torch.no_grad():
         for x, y_true in test_range:
@@ -53,12 +54,16 @@ def test(config: EasyDict, logging_path: str) -> None:
             y_true = y_true.to(device)
 
             y_pred = model.forward(x)
-                
-            loss = criterion(y_pred, y_true)
-
             
+            # compute Loss and metrics between y_pred and y_true
+            loss = criterion(y_pred, y_true)
             test_loss += loss.item()
             test_metrics += metrics.compute(y_pred=y_pred, y_true=y_true)
+
+            # compute loss and metrics between x and y_true
+            noisy_loss = criterion(x, y_true)
+            noise_metrics[0] += noisy_loss.item()
+            noise_metrics[1:] += metrics.compute(y_pred=x, y_true=y_true)
 
             test_range.set_description(f"TEST -> loss: {loss.item():.4f}")
             test_range.refresh()
@@ -72,3 +77,8 @@ def test(config: EasyDict, logging_path: str) -> None:
     test_logger(path=logging_path,
                 metrics=['mse'] + metrics.metrics_name,
                 values=[test_loss] + list(test_metrics))
+    
+    test_logger(path=logging_path,
+                metrics=['mse'] + metrics.metrics_name,
+                values=list(noise_metrics),
+                filename='test_noise_log.txt')

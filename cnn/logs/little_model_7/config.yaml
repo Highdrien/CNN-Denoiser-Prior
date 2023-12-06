@@ -27,3 +27,8 @@ learning:
     drop_last: true
     device: 'cuda'
     save_checkpoint: true
+
+# metrics
+metrics:
+  PSNR: true
+  MSSSIM: true
