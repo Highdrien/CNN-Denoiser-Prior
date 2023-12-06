@@ -22,7 +22,7 @@ class Metric(abc.ABC):
         return f"Metric: {self.name}"
     
     def to(self, device: device) -> None:
-        self.metric = self.metric.to(device)
+        self.metric.to(device)
 
     @abc.abstractmethod
     def compute(self, y_pred: Tensor, y_true: Tensor) -> ndarray:
