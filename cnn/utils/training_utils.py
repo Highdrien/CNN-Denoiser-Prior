@@ -44,3 +44,8 @@ def get_result(path: str) -> Tuple[List[float], List[str]]:
         result = np.array(result, dtype=float)
     f.close()
     return result, names
+
+
+if __name__ == '__main__':
+    experiment_path = os.path.join('logs', 'little_model_0')
+    save_learning_curves(path=experiment_path)
