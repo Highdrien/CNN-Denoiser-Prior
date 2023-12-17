@@ -6,6 +6,7 @@ from pylops.signalprocessing import Convolve2D
 
 from get_parameter import PARAM
 import blured_image
+from icecream import ic 
 
 
 def get_H(param: EasyDict) -> Tuple[ndarray, Convolve2D]:
@@ -22,12 +23,41 @@ def get_module_H_power_2(h: ndarray, image_shape: Tuple[int, int, int]) -> float
     return n * (np.linalg.norm(h) ** 2)
 
 
+def find_x_channel(image_shape: Tuple[int, int, int],
+                   mu: float,
+                   H: Convolve2D,
+                   h: ndarray,
+                   y: ndarray,
+                   z: ndarray):
+    """ a * fourier x = fourier b """
+    a = get_module_H_power_2(h, image_shape) + mu 
+    b = H.transpose() * y + mu * z
+    fourier_b = np.fft.fft(b)
+    fourier_x = fourier_b / a
+    fourier_x = fourier_x.reshape(image_shape[:-1])
+    x = np.fft.ifft2(fourier_x)
+    return np.real(x)
+
+
+def find_x(image_shape: Tuple[int, int, int],
+           mu: float,
+           H: Convolve2D,
+           h: ndarray,
+           y: ndarray,
+           z: ndarray):
+    x = np.zeros(shape=image_shape)
+    for c in range(image_shape[2]):
+        x_c = find_x_channel(image_shape=(256, 256, 3),
+                             mu=mu, H=H, h=h,
+                             y=y[..., c].flatten(),
+                             z=z[..., c].flatten())
+    
+        x[..., c] = x_c
+    
+    return x
 
 
 
 
-if __name__ == '__main__':
-    h, H = get_H(param=PARAM)
-    modH = get_module_H_power_2(h=h, image_shape=(256,256,3))
-    print(modH)
+
 
