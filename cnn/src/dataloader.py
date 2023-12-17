@@ -10,6 +10,7 @@ from typing import Optional, Tuple
 
 from torch import Tensor
 from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
 
 
 np.random.seed(0)
@@ -65,6 +66,9 @@ class DataGenerator(Dataset):
         self.noise_variance = noise_variance
         self.random_variance = random_variance
 
+        self.crop_transform = transforms.RandomCrop(size=(64, 64))
+
+
     def __len__(self) -> int:
         return len(self.data)
 
@@ -76,11 +80,16 @@ class DataGenerator(Dataset):
         # Get image
         image = np.array(Image.open(self.data[index]))
         image = np.transpose(image, (2, 0, 1))
-        assert image.shape == self.image_size, f"Error, image was load with a wrong shape. Expected: {self.image_size} but found {image.shape}"
+        
+        # assert image.shape == self.image_size, f"Error, image was load with a wrong shape. Expected: {self.image_size} but found {image.shape}"
 
         image = torch.from_numpy(image).to(torch.float32)
-        noise_variance = np.random.randint(self.noise_variance) if self.random_variance else self.noise_variance
-        blured_image = image + torch.randn_like(image) * noise_variance
+        image = self.crop_transform(image)
+
+        noise_variance = np.random.randint(1, self.noise_variance) if self.random_variance else self.noise_variance
+
+        blured_image = image + torch.randn_like(image, dtype=torch.float32) * noise_variance
+        blured_image = torch.clamp(input=blured_image, min=0, max=255)
         return blured_image, image
 
 
@@ -123,6 +132,12 @@ def plot_image_and_blured(image: Tensor, blured_image: Tensor) -> None:
 
 
 if __name__ == "__main__":
-    generator = DataGenerator(mode='val', data_path=os.path.join('..', 'data', 'center_patches'), image_size=(3, 256, 256))
+    generator = DataGenerator(mode='val',
+                              data_path=os.path.join('..', 'data', 'center_patches'),
+                              image_size=(3, 64, 64),
+                              noise_variance=20,
+                              random_variance=True)
     x, y = generator.__getitem__(42)
+    print(x.shape)
+    print(y.shape)
     plot_image_and_blured(image=y, blured_image=x)
