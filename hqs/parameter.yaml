@@ -1,14 +1,17 @@
 filter:
-  size: [5, 5]
+  size: [3, 3]
   epsilon: [0.01, 0.01]
 
-image_shape: [256, 256, 3]
+image_shape: [64, 64, 3]
 
 noise:
-  sigma: 50
+  sigma: 5
+  random_noise: false
 
 data:
   datafrom: cnn\data\center_patches
   num_data: 10
   path: blured_data
-  
+
+cnn:
+  logspath: cnn/logs/colab_0

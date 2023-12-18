@@ -3,15 +3,17 @@ import numpy as np
 from numpy import ndarray
 import matplotlib.pyplot as plt
 from PIL import Image
-from typing import Tuple
+from typing import Tuple, Optional
 from easydict import EasyDict
 
 from pylops.signalprocessing import Convolve2D
 from get_parameter import load_parameter
 
 
-def get_image(image_path: str) -> ndarray:
-    return np.array(Image.open(image_path))
+def get_image(image_path: str, image_size: Optional[int]=265) -> ndarray:
+    image = np.array(Image.open(image_path), dtype=np.float32)
+    image = image[:image_size, :image_size, :]
+    return image / 255
 
 
 def blurring_gaussion_operator(hdim: Tuple[int, int],
@@ -71,27 +73,25 @@ def save_blured_images_from_param(param: EasyDict) -> None:
     H = get_H(h=h, image_shape=param.image_shape)
 
     for filename in files:
-        image = get_image(image_path=os.path.join(param.data.datafrom, filename))
-        sigma = np.random.randint(low=1, high=param.noise.sigma)
-        blured_image = bluring_process(image=image,H=H, sigma=sigma)
+        image = get_image(image_path=os.path.join(param.data.datafrom, filename),
+                          image_size=param.image_shape[0])
         
-        blured_image = blured_image / 255
+        if param.noise.random_noise:
+            sigma = np.random.randint(low=1, high=param.noise.sigma)
+        else:
+            sigma = param.noise.sigma
+        sigma = sigma / 255
+
+        blured_image = bluring_process(image=image, H=H, sigma=sigma)
+        blured_image = np.clip(blured_image, a_min=0, a_max=1)
+
         dst_path = os.path.join(dst_folder, filename)[:-4]
 
-        np.save(dst_path, blured_image)
-        print(f"save image in {dst_path}.npz")  
+        np.save(f'{dst_path}_real', image) 
+        np.save(f'{dst_path}_blured', blured_image)
 
 
 
 if __name__ == '__main__':
-    # DATA_PATH = os.path.join('cnn', 'data', 'center_patches')
-    # image_shape = (256, 256, 3)
-    # y = get_image(os.path.join(DATA_PATH, '0002.png'))
-    # h = blurring_gaussion_operator(hdim=[5,  5], epsilon=[0.01, 0.01])
-    # H = get_H(h=h, image_shape=image_shape)
-    # x = bluring_process(image=y, H=H, sigma=10)
-
-    # plot_image(original_im=y, degraded_im=x / 255)
-
     PARAM = load_parameter(path=os.path.join('hqs', 'parameter.yaml'))
     save_blured_images_from_param(param=PARAM)
