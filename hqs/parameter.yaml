@@ -1,12 +1,12 @@
 filter:
-  size: [3, 3]
+  size: [5, 5]
   epsilon: [0.01, 0.01]
 
 image_shape: [64, 64, 3]
 
 noise:
   sigma: 5
-  random_noise: false
+  random_noise: true
 
 data:
   datafrom: cnn\data\center_patches
