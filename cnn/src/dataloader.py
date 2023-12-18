@@ -90,7 +90,7 @@ class DataGenerator(Dataset):
 
         blured_image = image + torch.randn_like(image, dtype=torch.float32) * noise_variance
         blured_image = torch.clamp(input=blured_image, min=0, max=255)
-        return blured_image, image
+        return blured_image / 255, image / 255
 
 
 def create_generator(mode: str, config: EasyDict) -> DataLoader:
