@@ -32,10 +32,9 @@ def load_img(fileindex: int) -> Tuple[ndarray, ndarray]:
     return image y and blured image: x """
     assert 0 <= fileindex <= 9, f"{fileindex} must be between [0, 9]"
     filename = f"0{891 + fileindex}"
-    x = np.load(os.path.join('blured_data', filename + '_real.npy'))
-    y = np.load(os.path.join('blured_data', filename + '_blured.npy'))
-    ic(x.shape, y.shape)
-    return y, x
+    im = np.load(os.path.join('blured_data', filename + '_real.npy'))
+    blured_im = np.load(os.path.join('blured_data', filename + '_blured.npy'))
+    return im, blured_im
     
 
 def inv_H(H: Convolve2D, mu: float) -> Tuple[ndarray, ndarray]:
@@ -54,7 +53,6 @@ def find_x(mat_H: ndarray, inv: ndarray, y: ndarray, mu: float, z: ndarray) -> n
     shape y, z -> (H, W, C)
     """
     x = np.zeros_like(y)
-    ic(x.shape)
     for c in range(x.shape[-1]):
         xc = inv @ (mat_H @ y[..., c].flatten() + mu * z[..., c].flatten())
         x[..., c] = xc.reshape((64, 64))
@@ -80,17 +78,7 @@ def run_hqs_method(param: EasyDict, y: ndarray, num_iter: int, mu: float, plot: 
     _, H = get_H(param=PARAM)
     mat_H, inv = inv_H(H, mu)
 
-    cnn_config_path = os.path.join(param.cnn.logspath, 'config.yaml')
-    stream = open(cnn_config_path, 'r')
-    cnn_config = EasyDict(yaml.safe_load(stream))
-    ic(cnn_config)
-    model = get_model(config=cnn_config)
-    checkpoint = torch.load(os.path.join(param.cnn.logspath, 'checkpoint.pt'))
-    model.load_state_dict(checkpoint)
-    del checkpoint
-
-    image_shape = tuple(param.image_shape)
-    print(image_shape)
+    model = get_model_param(param=param)
 
     dst_path = 'debluring'
     plt.imshow(y)
@@ -112,13 +100,34 @@ def run_hqs_method(param: EasyDict, y: ndarray, num_iter: int, mu: float, plot: 
     return z
 
 
-if __name__ == '__main__':
-    y, x = load_img(fileindex=0)
+def get_model_param(param: EasyDict) -> torch.nn.Module:
+    cnn_config_path = os.path.join(param.cnn.logspath, 'config.yaml')
+    stream = open(cnn_config_path, 'r')
+    cnn_config = EasyDict(yaml.safe_load(stream))
+    model = get_model(config=cnn_config)
+    checkpoint = torch.load(os.path.join(param.cnn.logspath, 'checkpoint.pt'))
+    model.load_state_dict(checkpoint)
+    del checkpoint
+    return model
 
-    plt.imshow(x)
+
+
+if __name__ == '__main__':
+    im, blured_im = load_img(fileindex=0)
+
+    plt.imshow(im)
     plt.savefig(os.path.join('debluring', 'x.png'))
     plt.clf()
 
-    z = run_hqs_method(param=PARAM, y=y, mu=0.1, num_iter=3, plot=True)
+    z = run_hqs_method(param=PARAM, y=blured_im, mu=0.1, num_iter=10, plot=True)
 
-    blured_image.plot_image(original_im=x, degraded_im=z)
+    blured_image.plot_image(original_im=blured_im, degraded_im=z, title='Image reconstruite')
+
+    model = get_model_param(param=PARAM)
+    im_model = torch.tensor(blured_im, requires_grad=False).permute(2, 0, 1).to(torch.float32).unsqueeze(0)
+    with torch.no_grad():
+        output = model.forward(im_model)
+        output = output.squeeze(0).permute(1, 2, 0).detach().numpy()
+        output = np.clip(output, a_min=0, a_max=1)
+    plt.imshow(output)
+    plt.savefig(os.path.join('debluring', 'forward_model.png'))

@@ -47,14 +47,14 @@ def bluring_process(image: ndarray, H: Convolve2D, sigma: int) -> ndarray:
     return blured_image
 
 
-def plot_image(original_im: ndarray, degraded_im: ndarray) -> None:
+def plot_image(original_im: ndarray, degraded_im: ndarray, title: Optional[str]='Image dégradée') -> None:
     plt.subplot(1, 2, 1)
     plt.imshow(original_im, vmin=0, vmax=1)
     plt.title("Image originale")
 
     plt.subplot(1, 2, 2)
     plt.imshow(degraded_im, vmin=0, vmax=1)
-    plt.title("Image dégradée")
+    plt.title(title)
 
     plt.show()
 
