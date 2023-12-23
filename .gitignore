@@ -3,3 +3,14 @@ __pycache__
 cnn/data
 afaire.txt
 DPIR
+
+# latex file
+slide.aux
+slide.fdb_latexmk
+slide.fls
+slide.log
+slide.nav
+slide.out
+slide.snm
+slide.synctex.gz
+slide.toc
