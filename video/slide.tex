@@ -2,7 +2,7 @@
 \usetheme{Warsaw}
 \usepackage[utf8]{inputenc}
 \usepackage{natbib}
-
+\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{subcaption}
 
@@ -19,23 +19,38 @@
 % --- Probleme ---
 \begin{frame}{Le Probleme inverse}
     \begin{block}{But}
-        On a une image observé dégradée $y$ et l'on veux retrouver l'image d'origine $x$. On sait 
-        que cette image a été dégradée comme ceci : 
+        On a une image observée dégradée $y$ et l'on veut retrouver l'image d'origine $x$. On sait 
+        que cette image a été dégradée de la façon suivante : 
         $$y = Hx + v$$
         où $H$ est la matrice de 
-        dégradation que l'on connait, et $v$ est un bruit gaussian d'écart-type $\sigma$ inconue.
+        dégradation que l'on connait, et $v$ est un bruit gaussien d'écart-type $\sigma$ inconnue.
     \end{block}
+    \begin{figure}[b]
+        \centering
+        \includegraphics[width=0.41\textwidth]{../debluring/x.png}
+        \hspace{1cm}
+        \includegraphics[width=0.41\textwidth]{../debluring/y.png}
+        \caption{image d'orignine x (à gauche) et l'image dégradée y (à droite).}
+    \end{figure}
 \end{frame}
 
+
 \begin{frame}{Maximiser la log likelihood}
-    $$ \max_x \log(p(x|y)) = \max_x \log(p(x, y))$$ car $p(x|y) = p(x, y) \times p(y)$
-    $$ = \max_x \log(p(y|x)) + \log(p(x))$$
-    or $(y|x) = (v+Hx|x) \sim N(Hx, \sigma^2)$, donc :
-    $$ = \max_x -\frac{||y-Hx||^2}{2 \sigma^2} + \log(p(x))$$
-    $$ = \min_x \frac{1}{2}||y-Hx||^2 + \lambda \Phi(x)$$
-    \begin{alertblock}{But}
-        On veut donc $\hat{x} = \text{arg} \min_x \frac{1}{2}||y-Hx||^2 + \lambda \Phi(x)$
-    \end{alertblock}
+    \begin{visibleenv}<1->
+        \begin{align*}
+            \max_x \log(p(x|y)) &= \max_x \log(p(x, y)) \quad \text{car } p(x|y) = p(x, y) \times p(y) \\
+            &= \max_x \log(p(y|x)) + \log(p(x)) \\
+            &\quad \text{or } (y|x) = (v+Hx|x) \sim \mathcal{N}(Hx, \sigma^2) \\
+            &= \max_x -\frac{||y-Hx||^2}{2 \sigma^2} + \log(p(x)) \\
+            &= \min_x \frac{1}{2}||y-Hx||^2 + \lambda \Phi(x) \quad \text{avec } \Phi = -\frac{\log \circ p}{\lambda}
+        \end{align*}
+    \end{visibleenv}
+
+    \begin{visibleenv}<2->
+        \begin{alertblock}{But}
+            On veut donc trouver $\hat{x}$ tel que: $\hat{x} = \text{arg} \min_x \frac{1}{2}||y-Hx||^2 + \lambda \Phi(x)$
+        \end{alertblock}
+    \end{visibleenv}
 \end{frame}
 
 \begin{frame}{Une première méthode: ISTA}
