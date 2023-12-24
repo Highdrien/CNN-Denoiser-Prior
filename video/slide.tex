@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage{tikz}
 
 
 \title{UE COM}
@@ -28,6 +29,9 @@
     \begin{figure}[b]
         \centering
         \includegraphics[width=0.41\textwidth]{../debluring/x.png}
+        \begin{tikzpicture}[overlay, remember picture]
+            \draw[->, blue, very thick] (0,1.5) -- (1,1.5) node[midway, above, blue] {$f_{H, \sigma}$};
+        \end{tikzpicture}
         \hspace{1cm}
         \includegraphics[width=0.41\textwidth]{../debluring/y.png}
         \caption{image d'orignine x (à gauche) et l'image dégradée y (à droite).}
