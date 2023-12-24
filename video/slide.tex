@@ -61,9 +61,19 @@
     raconter ISTA
 \end{frame}
 
-\begin{frame}{Une deuxièm méthode: HQS}
-    raconter HQS
+\begin{frame}{Une deuxième méthode: Half Quadratic Splitting (HQS)}
+    \begin{exampleblock}{Idée}
+        Diviser la variable $x$ pour découpler le terme de fidélité et le terme de régularisation.
+    \end{exampleblock}
+    On a l'équivalence entre:
+    $$ \min_x \frac{1}{2}||y-Hx||^2 + \lambda \Phi(x) $$
+    $$ \Leftrightarrow \min_{x, z} \frac{1}{2}||y-Hx||^2 + \lambda \Phi(z) \quad \text{tel que} \quad  z=x$$
+    En rajoutant un parametre $\mu$:
+    % $$ \Leftrightarrow \min_{x, z, \mu} \mathcal{L}_{\mu}(x,z) \quad \text{où } \mathcal{L}_{\mu}(x,z) = \frac{1}{2}||y-Hx||^2+\lambda \Phi(z) + \frac{\mu}{2}||z-x||^2 $$
+    $$ \Leftrightarrow \min_{x, z, \mu}  \frac{1}{2}||y-Hx||^2+\lambda \Phi(z) + \frac{\mu}{2}||z-x||^2 $$
+    On appele $\mathcal{L}_{\mu}(x,z)$, le terme que l'on doit minimizer.
 \end{frame}
+
 
 \begin{frame}{Les systèmes de plug and play}
     en quoi ça consiste
