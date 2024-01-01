@@ -4,13 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from PIL import Image
-from torch import Tensor
 from easydict import EasyDict
 from typing import Optional, Tuple
 
+from torch import nn
 from torch import Tensor
-from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
+from torch.utils.data import Dataset, DataLoader
 
 
 np.random.seed(0)
@@ -41,7 +41,8 @@ class DataGenerator(Dataset):
                  data_path: str,
                  image_size: Tuple[int, int, int],
                  noise_variance: float,
-                 random_variance: bool
+                 random_variance: bool,
+                 resize: str='random_crop'
                  ) -> None:
         """ create a generator with:
         mode in train, val, test
@@ -66,7 +67,10 @@ class DataGenerator(Dataset):
         self.noise_variance = noise_variance
         self.random_variance = random_variance
 
-        self.crop_transform = transforms.RandomCrop(size=(64, 64))
+        if resize == 'bicubic':
+            self.crop_transform = nn.MaxPool2d(kernel_size=4)
+        else: 
+            self.crop_transform = transforms.RandomCrop(size=(64, 64))
 
 
     def __len__(self) -> int:
@@ -111,8 +115,6 @@ def create_generator(mode: str, config: EasyDict) -> DataLoader:
 def plot_image_and_blured(image: Tensor, blured_image: Tensor) -> None:
     """ plot HR image and the blured image """
     def pre_process(x: Tensor) -> Tensor:
-        if x.dtype != torch.uint8:
-            x = x.to(torch.uint8)
         if x.shape[0] == 3:
             x = x.permute(1, 2, 0)
         return x
@@ -132,12 +134,14 @@ def plot_image_and_blured(image: Tensor, blured_image: Tensor) -> None:
 
 
 if __name__ == "__main__":
+    from icecream import ic
     generator = DataGenerator(mode='val',
-                              data_path=os.path.join('..', 'data', 'center_patches'),
+                              data_path=os.path.join('data', 'all_patches'),
                               image_size=(3, 64, 64),
                               noise_variance=20,
-                              random_variance=True)
+                              random_variance=True,
+                              resize='bicubic')
     x, y = generator.__getitem__(42)
-    print(x.shape)
-    print(y.shape)
+    ic(x.shape)
+    ic(y.shape)
     plot_image_and_blured(image=y, blured_image=x)

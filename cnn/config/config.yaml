@@ -1,12 +1,13 @@
-name: little_model_test
+name: bruit_constant
 save_experiment: true
 
 # data options
 data: 
   path: 'data\center_patches'
   image_size: 64
-  noise_variance: 20
-  random_variance: true
+  noise_variance: 5
+  random_variance: false
+  resize: bicubic
 
 # model options
 model:
