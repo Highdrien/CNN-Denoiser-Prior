@@ -73,6 +73,7 @@ def test(config: EasyDict, logging_path: str) -> None:
     ###################################################################
     test_loss = test_loss / n_test
     test_metrics = test_metrics / n_test
+    noise_metrics = noise_metrics / n_test
     
     test_logger(path=logging_path,
                 metrics=['mse'] + metrics.metrics_name,

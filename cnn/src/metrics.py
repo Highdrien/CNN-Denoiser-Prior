@@ -43,7 +43,7 @@ class MSSSIM(Metric):
     # see https://lightning.ai/docs/torchmetrics/stable/image/multi_scale_structural_similarity.html#torchmetrics.image.MultiScaleStructuralSimilarityIndexMeasure
     def __init__(self) -> None:
         super().__init__(name='MSSSIM')
-        self.metric = MultiScaleStructuralSimilarityIndexMeasure()
+        self.metric = MultiScaleStructuralSimilarityIndexMeasure(data_range=1.0, kernel_size=7, betas=(0.01, 0.03))
 
     def compute(self, y_pred: Tensor, y_true: Tensor) -> ndarray:
         return self.metric(preds=y_pred, target=y_true)
@@ -92,7 +92,7 @@ class Metrics():
 
 if __name__ == '__main__':
     import torch
-    shape = (16, 3, 256, 256)
+    shape = (16, 3, 64, 64)
     y = torch.rand(shape)
     x = y + torch.rand(shape) / 10
 
