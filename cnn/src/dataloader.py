@@ -103,7 +103,8 @@ def create_generator(mode: str, config: EasyDict) -> DataLoader:
                               data_path=config.data.path,
                               image_size=(3, config.data.image_size, config.data.image_size),
                               noise_variance=config.data.noise_variance,
-                              random_variance=config.data.random_variance)
+                              random_variance=config.data.random_variance,
+                              resize=config.data.resize)
     dataloader = DataLoader(generator,
                             batch_size=config.learning.batch_size,
                             shuffle=config.learning.shuffle,

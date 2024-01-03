@@ -8,6 +8,7 @@ data:
     image_size: 64
     noise_variance: 20
     random_variance: true
+    resize: random_crop
 
 # model options
 model:
