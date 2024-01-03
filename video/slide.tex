@@ -6,6 +6,14 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{tikz}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
 
 
 \title{UE COM}
@@ -58,7 +66,11 @@
 \end{frame}
 
 \begin{frame}{Une première méthode: ISTA}
-    raconter ISTA
+    On veut minimizer: $F(x) = f(x) + g(x)$ avec $f=\frac{1}{2}\lVert y - H \rVert ^2$ et $g=\lambda \Phi$
+    
+    On prend $L$ la constante de Lipschitz de $f$.
+
+    On pose $$ p_L(y) = \arg \max_x \Bigg\{ g(x) + \frac{L}{2} \Big\lVert x - \Big(y - \frac{1}{L} \nabla f(y)\Big) \Big\rVert ^2 \Bigg\}$$
 \end{frame}
 
 \begin{frame}{Une deuxième méthode: Half Quadratic Splitting (HQS)}
@@ -108,6 +120,17 @@
     résultats
 \end{frame}
 
+\begin{frame}{Référances}
+    \begin{itemize}
+        \item \textbf{acticle:} Kai Zhang, Wangmeng Zuo, Shuhang Gu and Lei Zhang, 
+            \textit{Learning Deep {CNN} Denoiser Prior for Image Restoration}.
+            \url{http://arxiv.org/abs/1704.03264}
+        \item \textbf{FISTA:} Amir Beck and Marc Teboulle, \textit{A Fast Iterative Shrinkage-Thresholding 
+        Algorithm for Linear Inverse Problems}. \url{https://www.ceremade.dauphine.fr/~carlier/FISTA}
+        \item \textbf{Lien de mon implémentation:} \url{https://github.com/Highdrien/CNN-Denoiser-Prior}
+    \end{itemize}
+    
+\end{frame}
 
 
 \end{document}
