@@ -45,14 +45,14 @@
             \max_x \log(p(x|y)) &= \max_x \log(p(x, y)) \quad \text{car } p(x|y) = p(x, y) \times p(y) \\
             &= \max_x \log(p(y|x)) + \log(p(x)) \\
             &\quad \text{or } (y|x) = (v+Hx|x) \sim \mathcal{N}(Hx, \sigma^2) \\
-            &= \max_x -\frac{||y-Hx||^2}{2 \sigma^2} + \log(p(x)) \\
-            &= \min_x \frac{1}{2}||y-Hx||^2 + \lambda \Phi(x) \quad \text{avec } \Phi = -\frac{\log \circ p}{\lambda}
+            &= \max_x -\frac{\lVert y-Hx \rVert ^2}{2 \sigma^2} + \log(p(x)) \\
+            &= \min_x \frac{1}{2}\lVert y-Hx \rVert ^2 + \lambda \Phi(x) \quad \text{avec } \Phi = -\frac{\log \circ p}{\lambda}
         \end{align*}
     \end{visibleenv}
 
     \begin{visibleenv}<2->
         \begin{alertblock}{But}
-            On veut donc trouver $\hat{x}$ tel que: $\hat{x} = \text{arg} \min_x \frac{1}{2}||y-Hx||^2 + \lambda \Phi(x)$
+            On veut donc trouver $\hat{x}$ tel que: $\hat{x} = \text{arg} \min_x \frac{1}{2} \lVert y-Hx \rVert ^2 + \lambda \Phi(x)$
         \end{alertblock}
     \end{visibleenv}
 \end{frame}
@@ -62,16 +62,33 @@
 \end{frame}
 
 \begin{frame}{Une deuxième méthode: Half Quadratic Splitting (HQS)}
-    \begin{exampleblock}{Idée}
-        Diviser la variable $x$ pour découpler le terme de fidélité et le terme de régularisation.
-    \end{exampleblock}
-    On a l'équivalence entre:
-    $$ \min_x \frac{1}{2}||y-Hx||^2 + \lambda \Phi(x) $$
-    $$ \Leftrightarrow \min_{x, z} \frac{1}{2}||y-Hx||^2 + \lambda \Phi(z) \quad \text{tel que} \quad  z=x$$
-    En rajoutant un parametre $\mu$:
-    % $$ \Leftrightarrow \min_{x, z, \mu} \mathcal{L}_{\mu}(x,z) \quad \text{où } \mathcal{L}_{\mu}(x,z) = \frac{1}{2}||y-Hx||^2+\lambda \Phi(z) + \frac{\mu}{2}||z-x||^2 $$
-    $$ \Leftrightarrow \min_{x, z, \mu}  \frac{1}{2}||y-Hx||^2+\lambda \Phi(z) + \frac{\mu}{2}||z-x||^2 $$
-    On appele $\mathcal{L}_{\mu}(x,z)$, le terme que l'on doit minimizer.
+    \begin{visibleenv}<1->
+        \begin{exampleblock}{Idée}
+            Diviser la variable $x$ pour découpler le terme de fidélité et le terme de régularisation.
+        \end{exampleblock}
+    \end{visibleenv}
+    \begin{visibleenv}<2->
+        On a l'équivalence entre:
+        $$ \min_x \frac{1}{2}\lVert y-Hx \rVert^2 + \lambda \Phi(x) $$
+        $$ \Leftrightarrow \min_{x, z} \frac{1}{2}\lVert y-Hx \rVert ^2 + \lambda \Phi(z) \quad \text{tel que} \quad  z=x$$
+        En rajoutant un parametre $\mu$:
+        $$ \Leftrightarrow \min_{x, z, \mu}  \frac{1}{2}\lVert y-Hx \rVert ^2+\lambda \Phi(z) + \frac{\mu}{2}\lVert z-x \rVert ^2 $$
+        On appele $\mathcal{L}_{\mu}(x,z)$, le terme que l'on doit minimizer.
+    \end{visibleenv}
+\end{frame}
+
+\begin{frame}{Une deuxième méthode: Half Quadratic Splitting (HQS)}
+    Comme $\mathcal{L}_{\mu}(x,z)$ est décroissante (pour les variable $x$ et $z$), on a:
+    $$\min_{x, z} \mathcal{L}_{\mu}(x,z) = \lim_{k \rightarrow \infty} \min_z \min_x \min_z \dots \min_x \mathcal{L}_{\mu}(x,z)$$
+    On peut alors écrire:
+    \begin{equation*}
+        \left\{
+        \begin{aligned}
+            & \arg \min_x \quad \lVert y - Hx \rVert^2 + \mu \lVert z - x \rVert^2 \\
+            & \arg \min_z \quad \frac{\mu}{2}\lVert z - x \rVert^2 + \lambda \Phi(z)
+        \end{aligned}
+        \right.
+    \end{equation*}
 \end{frame}
 
 
