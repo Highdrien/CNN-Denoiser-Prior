@@ -80,12 +80,12 @@
 \begin{frame}{Une deuxième méthode: Half Quadratic Splitting (HQS)}
     Comme $\mathcal{L}_{\mu}(x,z)$ est décroissante (pour les variable $x$ et $z$), on a:
     $$\min_{x, z} \mathcal{L}_{\mu}(x,z) = \lim_{k \rightarrow \infty} \min_z \min_x \min_z \dots \min_x \mathcal{L}_{\mu}(x,z)$$
-    On peut alors écrire:
+    On peut alors trouver le minimun sur $x$ et $z$ en itérant :
     \begin{equation*}
         \left\{
         \begin{aligned}
-            & \arg \min_x \quad \lVert y - Hx \rVert^2 + \mu \lVert z - x \rVert^2 \\
-            & \arg \min_z \quad \frac{\mu}{2}\lVert z - x \rVert^2 + \lambda \Phi(z)
+            & x_{k+1} = \arg \min_x \quad \lVert y - Hx \rVert^2 + \mu \lVert z_k - x \rVert^2 \\
+            & z_{k+1} = \arg \min_z \quad \frac{\mu}{2}\lVert z - x_{k+1} \rVert^2 + \lambda \Phi(z)
         \end{aligned}
         \right.
     \end{equation*}
