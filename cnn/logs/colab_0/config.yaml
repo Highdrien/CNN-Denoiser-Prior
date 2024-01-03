@@ -32,4 +32,4 @@ learning:
 # metrics options
 metrics:
     PSNR: true
-    MSSSIM: false
+    MSSSIM: true

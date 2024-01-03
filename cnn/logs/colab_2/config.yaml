@@ -4,7 +4,7 @@ save_experiment: true
 
 # data options
 data:
-    path: 'drive/MyDrive/Denoiser/data/all_patches'
+    path: data/all_patches
     image_size: 64
     noise_variance: 5
     random_variance: false
@@ -32,4 +32,4 @@ learning:
 # metrics options
 metrics:
     PSNR: true
-    MSSSIM: false
+    MSSSIM: true
