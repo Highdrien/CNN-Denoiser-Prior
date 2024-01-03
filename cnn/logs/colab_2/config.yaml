@@ -1,0 +1,35 @@
+config_metadata: 'Saving time : 01/01/2024, 21:59:39'
+name: 'colab'
+save_experiment: true
+
+# data options
+data:
+    path: 'drive/MyDrive/Denoiser/data/all_patches'
+    image_size: 64
+    noise_variance: 5
+    random_variance: false
+    resize: 'bicubic'
+
+# model options
+model:
+    dilitation: [1, 2, 3, 2, 1]
+
+# learning options
+learning:
+    loss: 'mse'
+    optimizer: 'adam'
+    learning_rate: 0.01
+    milesstone: [5, 15]
+    gamma: 0.1
+    epochs: 30
+    batch_size: 16
+    save_learning_curves: true
+    shuffle: true
+    drop_last: true
+    device: 'cuda'
+    save_checkpoint: true
+
+# metrics options
+metrics:
+    PSNR: true
+    MSSSIM: false
