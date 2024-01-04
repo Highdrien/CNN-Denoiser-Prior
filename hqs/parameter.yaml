@@ -12,6 +12,7 @@ data:
   data_root: images
   datafrom: images/original
   blured_path: images/hqs_blured
+  hqs_orign: images/hqs_original
 
 cnn:
   logspath: cnn/logs/constant

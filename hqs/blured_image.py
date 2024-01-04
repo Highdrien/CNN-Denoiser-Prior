@@ -86,6 +86,8 @@ def save_blured_images_from_param(param: EasyDict) -> None:
         dst_path = os.path.join(param.data.blured_path, filename)[:-4]
 
         np.save(dst_path, blured_image)
+        image = Image.fromarray((image * 255).astype(np.uint8))
+        image.save(os.path.join(param.data.hqs_orign, f'{filename[:-4]}.png'))
 
 
 
