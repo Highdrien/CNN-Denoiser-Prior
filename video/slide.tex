@@ -26,7 +26,7 @@
 \maketitle
 
 % \section{Introduction}
-\begin{frame}{Le Problème inverse}
+\begin{frame}{Le problème inverse}
     \begin{block}{But}
         On a une image observée dégradée $y$ et l'on veut retrouver l'image d'origine $x$. On sait 
         que cette image a été dégradée de la façon suivante : 
@@ -73,7 +73,7 @@
 
     En posant $p_L$ tel que : $$ p_L(y) = \arg \max_x \Bigg\{ g(x) + \frac{L}{2} \Big\lVert x - \Big(y - \frac{1}{L} \nabla f(y)\Big) \Big\rVert ^2 \Bigg\}$$
 
-    On peut montrer que l'on peut approximer $\hat{x} = \displaystyle \min_x F(x)$ en itérant :
+    On peut montrer qu'il est possible d'approximer $\hat{x} = \displaystyle \min_x F(x)$ en itérant :
     $$x_{k+1} = p_L(x_k)$$
     c'est-à-dire : $\hat{x} = \displaystyle \lim_{k \rightarrow \infty} x_{k+1}$
 
@@ -116,15 +116,15 @@
 % \section{Les systèmes de plug and play}
 \begin{frame}{Les systèmes de plug and play}
     \begin{exampleblock}{Définition}
-        Un système de plug and play est un système qui pour un problème donné le résout
-        avec à la fois une méthode d'optimisation et une méthode d'apprentissage.
+        Un système de plug and play est un système qui, pour un problème donné, le résout
+        à la fois avec une méthode d'optimisation et avec une méthode d'apprentissage.
     \end{exampleblock}
 
     L'article propose de résoudre les 2 équations de la HQS comme ceci :
     \begin{equation*}
         \left\{
         \begin{aligned}
-            & x_{k+1} = \arg \min_x \quad \lVert y - Hx \rVert^2 + \mu \lVert z_k - x \rVert^2 &  \rightarrow \text{calcule de gradient}\\
+            & x_{k+1} = \arg \min_x \quad \lVert y - Hx \rVert^2 + \mu \lVert z_k - x \rVert^2 &  \rightarrow \text{calcul de gradient}\\
             & z_{k+1} = \arg \min_z \quad \frac{\mu}{2}\lVert z - x_{k+1} \rVert^2 + \lambda \Phi(z) & \rightarrow \text{Denoiser (CNNs)}
         \end{aligned}
         \right.
@@ -155,7 +155,7 @@
         \includegraphics[width=\textwidth]{../paper/model.png}
         \caption{Denoiser utilisé dans l'article}
     \end{figure}
-    \begin{block}{Dans l'article}
+    \begin{block}{Méthodologie de l'article}
         Entraînement de 25 Denoiser avec une variance de bruit constant de $2k$ où $k\in [1, 25]$.
     \end{block}
 \end{frame}
@@ -163,15 +163,15 @@
 \begin{frame}{Denoiser: architecture}
     \begin{block}{Mon Denoiser}
         modèle : 5 couches CNNs au lieu de 7. (dilatation de 1, 2, 3, 2, 1) sur des images en 
-        couleur de tailles : $64 \times 64$.
+        couleur de taille : $64 \times 64$.
 
         2 entraînements : 
         \begin{itemize}
-            \item \textbf{Const}: appris sur une variance de bruit constant de 5,
-            image viennent d'un maxpooling d'image de $256 \times 256$. \\
+            \item \textbf{Const}: a appris sur une variance de bruit constant de 5,
+            les images viennent d'un maxpooling d'image de $256 \times 256$. \\
 
-            \item \textbf{Rand}: appris sur une variance de bruit uniforme sur $[1, 20]$, 
-            image qui vienne d'un crop.
+            \item \textbf{Rand}: a appris sur une variance de bruit uniforme sur $[1, 20]$, 
+            les images qui viennent d'un crop.
         \end{itemize}
     \end{block}
 \end{frame}
@@ -185,8 +185,8 @@
             \hline
              & MSE & PSNR & MSSSIM \\
              \hline
-            \textbf{Baseline} & 3.74$\times 10^4$ & 34.3 & 0.998\\
-            \textbf{Const} & 7.05$\times 10^4$ & 31.7 & 0.999 \\
+            \textbf{Baseline} & 3.74$\times 10^{-4}$ & 34.3 & 0.998\\
+            \textbf{Const} & 7.05$\times 10^{-4}$ & 31.7 & 0.999 \\
             \hline
         \end{tabular}
         \caption{Image avec une variance de bruit constant de 5.}
@@ -198,8 +198,8 @@
             \hline
              & MSE & PSNR & MSSSIM \\
              \hline
-            \textbf{Baseline} & 18.7$\times 10^4$ & 27.38 & 0.990\\
-            \textbf{Rand} & 9.01$\times 10^4$ & 30.6 & 0.996 \\
+            \textbf{Baseline} & 18.7$\times 10^{-4}$ & 27.38 & 0.990\\
+            \textbf{Rand} & 9.01$\times 10^{-4}$ & 30.6 & 0.996 \\
             \hline
         \end{tabular}
         \caption{Image avec une variance de bruit variant entre 1 et 20.}
