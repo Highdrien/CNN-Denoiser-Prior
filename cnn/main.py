@@ -7,6 +7,7 @@ from typing import Optional
 
 from src.train import train
 from src.test import test
+from src.infer import infer
 from src.dataloader import create_generator, plot_image_and_blured
 
 
@@ -29,7 +30,7 @@ def find_config(experiment_path: str) -> str:
     
     exit()
 
-IMPLEMENTED = ['train', 'data', 'test']
+IMPLEMENTED = ['train', 'data', 'test', 'infer']
 
 def main(options: dict) -> None:
 
@@ -55,16 +56,28 @@ def main(options: dict) -> None:
         config = load_config(config_path)
         ic(config)
         test(config=config, logging_path=options['path'])
+    
+    if options['mode'] == 'infer':
+        assert options['path'] is not None, 'Error, please enter the path of your experimentation that you want to test'
+
+        config_path = find_config(experiment_path=options['path'])
+        config = load_config(config_path)
+        ic(config)
+        infer(config=config, logging_path=options['path'], data_path=options['data_path'])
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Options
-    parser.add_argument('--mode', default=None, type=str, help="choose a mode between 'train', 'data'")
-    parser.add_argument('--config_path', default=os.path.join('config', 'config.yaml'), type=str, help="path to config (for training)")
-    parser.add_argument('--path', type=str, help="experiment path (for test, prediction or generate)")
-
+    parser.add_argument('--mode', default=None, type=str,
+                        help="choose a mode between 'train', 'data'")
+    parser.add_argument('--config_path', default=os.path.join('config', 'config.yaml'), type=str,
+                        help="path to config (for training)")
+    parser.add_argument('--path', type=str,
+                        help="experiment path (for test, prediction or generate)")
+    parser.add_argument('--data_path', type=str, default=os.path.join('..', 'images'),
+                        help='path to the data for the inference: must containt a blured folder')
     args = parser.parse_args()
     options = vars(args)
 
