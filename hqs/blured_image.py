@@ -63,6 +63,8 @@ def plot_image(original_im: ndarray, degraded_im: ndarray, title: str='Image dé
 def save_blured_images_from_param(param: EasyDict) -> None:
     np.random.seed(0)
     files = os.listdir(param.data.datafrom)
+    if not os.path.exists(param.data.blured_path):
+        os.makedirs(param.data.blured_path)
 
     h = blurring_gaussion_operator(hdim=param.filter.size,
                                    epsilon=param.filter.epsilon)

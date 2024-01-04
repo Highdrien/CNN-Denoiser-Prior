@@ -10,7 +10,7 @@ noise:
 
 data:
   datafrom: images/original
-  blured_path: images/blured
+  blured_path: images/hqs_blured
 
 cnn:
   logspath: cnn/logs/colab_0
