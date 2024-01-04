@@ -79,6 +79,10 @@
 
 \end{frame}
 
+\begin{frame}{Une première méthode : ISTA}
+    image de l'implémentation d'ISTA (si j'ai le temps)
+\end{frame}
+
 \begin{frame}{Une deuxième méthode : Half Quadratic Splitting (HQS)}
     \begin{visibleenv}<1->
         \begin{exampleblock}{Idée}
@@ -172,14 +176,46 @@
     \end{block}
 \end{frame}
 
-\begin{frame}{Denoiser}
-    résultat du test et images d'inférences des 2 Denoiser.
+\begin{frame}{Le Denoiser}
+
+    Les résultats de tests :
+    \begin{table}
+        \centering
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+             & MSE & PSNR & MSSSIM \\
+             \hline
+            Baseline & 3.74$\times 10^4$ & 34.3 & 0.998\\
+            Const & 7.05$\times 10^4$ & 31.7 & 0.999 \\
+            \hline
+        \end{tabular}
+        \caption{Image avec un écart-type de bruit constant de 5.}
+    \end{table}
+
+    \begin{table}
+        \centering
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+             & MSE & PSNR & MSSSIM \\
+             \hline
+            Baseline & 18.7$\times 10^4$ & 27.38 & 0.990\\
+            Rand & 9.01$\times 10^4$ & 30.6 & 0.996 \\
+            \hline
+        \end{tabular}
+        \caption{Image avec un écart-type de bruit variant entre 1 et 20.}
+    \end{table}
 \end{frame}
 
+\begin{frame}{Le Denoiser}
+    inférence
+\end{frame}
+
+% \section{implémentation}
 \begin{frame}{Plug and play}
     résultats
 \end{frame}
 
+% \section{Références}
 \begin{frame}{Références}
     \begin{itemize}
         \item \textbf{acticle:} Kai Zhang, Wangmeng Zuo, Shuhang Gu and Lei Zhang, 
