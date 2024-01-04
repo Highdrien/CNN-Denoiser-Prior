@@ -36,12 +36,12 @@
     \end{block}
     \begin{figure}[b]
         \centering
-        \includegraphics[width=0.41\textwidth]{../debluring/x.png}
+        \includegraphics[width=0.25\textwidth]{../images/hqs_original/0823.png}
         \begin{tikzpicture}[overlay, remember picture]
             \draw[->, blue, very thick] (0,1.5) -- (1,1.5) node[midway, above, blue] {$f_{H, \sigma}$};
         \end{tikzpicture}
         \hspace{1cm}
-        \includegraphics[width=0.41\textwidth]{../debluring/y.png}
+        \includegraphics[width=0.25\textwidth]{../images/hqs_constant/y.png}
         \caption{image d'origine x (à gauche) et l'image dégradée y (à droite).}
     \end{figure}
 \end{frame}
@@ -80,7 +80,7 @@
 \end{frame}
 
 \begin{frame}{Une première méthode : ISTA}
-    image de l'implémentation d'ISTA (si j'ai le temps)
+    image de l'implémentation d'ISTA (si j'ai le temps) (diapo pas encore faite)
 \end{frame}
 
 \begin{frame}{Une deuxième méthode : Half Quadratic Splitting (HQS)}
@@ -229,18 +229,65 @@
 \end{frame}
 
 % \section{implémentation}
-\begin{frame}{Plug and play}
-    résultats
+\begin{frame}{Plug and play: résultats de \textbf{Const}}
+    \begin{figure}[b]
+        \centering
+        \includegraphics[width=0.20\textwidth]{../images/hqs_original/0823.png}
+        \begin{tikzpicture}[overlay, remember picture]
+            \draw[->, blue, very thick] (0,1.5) -- (1,1.5) node[midway, above, blue] {$f_{H, \sigma}$};
+        \end{tikzpicture}
+        \hspace{1cm}
+        \includegraphics[width=0.20\textwidth]{../images/hqs_constant/y.png}
+        \caption{image d'origine x (à gauche) et l'image dégradée y (à droite).}
+    \end{figure}
+    \begin{figure}[b]
+        \centering
+        \includegraphics[width=0.20\textwidth]{../images/hqs_constant/x_0.png}
+        \includegraphics[width=0.20\textwidth]{../images/hqs_constant/z_0.png}
+        \includegraphics[width=0.20\textwidth]{../images/hqs_constant/x_1.png}
+        \includegraphics[width=0.20\textwidth]{../images/hqs_constant/z_1.png}
+        \caption{images représentant réspectivement $x_1$, $z_1$, $x_2$, $z_2$.}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Plug and play : résultats de \textbf{Const}}
+    Plug and play fait sur 10 itérations
+    \begin{figure}[b]
+        \centering
+        \includegraphics[width=0.30\textwidth]{../images/hqs_original/0823.png}
+        \includegraphics[width=0.30\textwidth]{../images/hqs_constant/y.png}
+        \includegraphics[width=0.30\textwidth]{../images/hqs_constant/z_9.png}
+        \caption{image d'origine x (à gauche), l'image dégradée y (eu centre) et image de $z_10$ (à droite).}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Plug and play : résultats de \textbf{Const}}
+    \begin{figure}[b]
+        \centering
+        \includegraphics[width=0.49\textwidth]{../images/hqs_constant/MSE.png}
+        \includegraphics[width=0.49\textwidth]{../images/hqs_constant/PSNR.png}
+        \caption{Métriques MSE et PSNR en fonction des itérations.}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Plug and play : les résultats de l'article}
+    Parler des résultats qu'ont obtenus les auteurs de l'article. (diapo pas encore faite)
+\end{frame}
+
+\begin{frame}{Plug and play : continue}
+    Parler rapidement de la v2 du papier avec U-net (diapo pas encore faite)
 \end{frame}
 
 % \section{Références}
 \begin{frame}{Références}
     \begin{itemize}
-        \item \textbf{acticle:} Kai Zhang, Wangmeng Zuo, Shuhang Gu and Lei Zhang, 
+        \item \textbf{article:} Kai Zhang, Wangmeng Zuo, Shuhang Gu and Lei Zhang, 
             \textit{Learning Deep {CNN} Denoiser Prior for Image Restoration}.
             \url{http://arxiv.org/abs/1704.03264}
         \item \textbf{FISTA:} Amir Beck and Marc Teboulle, \textit{A Fast Iterative Shrinkage-Thresholding 
         Algorithm for Linear Inverse Problems}. \url{https://www.ceremade.dauphine.fr/~carlier/FISTA}
+        \item \textbf{article v2:} Zhang, Kai and Li, Yawei and Zuo, Wangmeng and Zhang, Lei and Van Gool, Luc and Timofte, Radu,
+            \textit{Plug-and-Play Image Restoration With Deep Denoiser Prior}, \url{https://arxiv.org/pdf/2008.13751.pdf}
         \item \textbf{Lien de mon implémentation :} \url{https://github.com/Highdrien/CNN-Denoiser-Prior}
     \end{itemize}
     
