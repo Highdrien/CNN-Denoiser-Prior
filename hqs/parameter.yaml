@@ -1,16 +1,17 @@
 filter:
   size: [5, 5]
-  epsilon: [0.01, 0.01]
+  epsilon: [1.5, 1.5]
 
 image_shape: [64, 64, 3]
 
 noise:
   sigma: 5
-  random_noise: true
+  random_noise: false
 
 data:
+  data_root: images
   datafrom: images/original
   blured_path: images/hqs_blured
 
 cnn:
-  logspath: cnn/logs/colab_0
+  logspath: cnn/logs/constant
