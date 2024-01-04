@@ -5,7 +5,6 @@ from easydict import EasyDict
 from typing import Tuple
 from pylops.signalprocessing import Convolve2D
 from PIL import Image
-from icecream import ic 
 import matplotlib.pyplot as plt
 import sys
 import torch
@@ -15,7 +14,6 @@ from get_parameter import PARAM
 import blured_image
 
 sys.path.append(os.path.join(sys.path[0], '..'))
-# print(sys.path)
 from cnn.src.model import get_model
 
 
@@ -27,14 +25,14 @@ def get_H(param: EasyDict) -> Tuple[ndarray, Convolve2D]:
     return (h, H)
 
 
-def load_img(fileindex: int) -> Tuple[ndarray, ndarray]:
+def load_img(param: EasyDict, fileindex: int) -> Tuple[ndarray, ndarray]:
     """ get the file number <fileindex> 
     return image y and blured image: x """
-    assert 0 <= fileindex <= 9, f"{fileindex} must be between [0, 9]"
-    filename = f"0{891 + fileindex}"
-    im = np.load(os.path.join('blured_data', filename + '_real.npy'))
-    blured_im = np.load(os.path.join('blured_data', filename + '_blured.npy'))
-    return im, blured_im
+    path = param.data.blured_path
+    filename = os.listdir(path)[fileindex]
+    filepath = os.path.join(path, filename)
+    blured_image = np.load(file=filepath)
+    return blured_image
     
 
 def inv_H(H: Convolve2D, mu: float) -> Tuple[ndarray, ndarray]:
@@ -74,28 +72,28 @@ def find_z(x: ndarray, model: torch.nn.Module) -> ndarray:
     return z
 
 
-def run_hqs_method(param: EasyDict, y: ndarray, num_iter: int, mu: float, plot: bool):
+def run_hqs_method(param: EasyDict, y: ndarray, num_iter: int, mu: float, save: bool) -> ndarray:
     _, H = get_H(param=PARAM)
     mat_H, inv = inv_H(H, mu)
 
     model = get_model_param(param=param)
 
-    dst_path = 'debluring'
-    plt.imshow(y)
-    plt.savefig(os.path.join(dst_path, 'y.png'))
-    plt.clf()
+    dst_path = os.path.join(param.data.data_root, f"hqs_{param.cnn.logspath.split('/')[-1]}")
+    if not os.path.exists(dst_path):
+        os.makedirs(dst_path)
+    
+    image = Image.fromarray((y * 255).astype(np.uint8))
+    image.save(os.path.join(dst_path, 'y.png'))
 
     for i in range(num_iter):
         x = find_x(mat_H=mat_H, inv=inv, y=y, mu=mu, z=y)
         z = find_z(x=x, model=model)
 
-        if plot:
-            plt.imshow(x)
-            plt.savefig(os.path.join(dst_path, f'x_{i}.png'))
-            plt.clf()
-            plt.imshow(z)
-            plt.savefig(os.path.join(dst_path, f'z_{i}.png'))
-            plt.clf()
+        if save:
+            image = Image.fromarray((x * 255).astype(np.uint8))
+            image.save(os.path.join(dst_path, f'x_{i}.png'))
+            image = Image.fromarray((z * 255).astype(np.uint8))
+            image.save(os.path.join(dst_path, f'z_{i}.png'))
 
     return z
 
@@ -113,21 +111,21 @@ def get_model_param(param: EasyDict) -> torch.nn.Module:
 
 
 if __name__ == '__main__':
-    im, blured_im = load_img(fileindex=0)
+    blured_im = load_img(param=PARAM, fileindex=0)
 
-    plt.imshow(im)
-    plt.savefig(os.path.join('debluring', 'x.png'))
-    plt.clf()
+    # plt.imshow(blured_im)
+    # plt.show()
+    # plt.savefig(os.path.join('debluring', 'x.png'))
+    # plt.clf()
+    z = run_hqs_method(param=PARAM, y=blured_im, mu=0.1, num_iter=10, save=True)
 
-    z = run_hqs_method(param=PARAM, y=blured_im, mu=0.1, num_iter=10, plot=True)
+    # blured_image.plot_image(original_im=blured_im, degraded_im=z, title='Image reconstruite')
 
-    blured_image.plot_image(original_im=blured_im, degraded_im=z, title='Image reconstruite')
-
-    model = get_model_param(param=PARAM)
-    im_model = torch.tensor(blured_im, requires_grad=False).permute(2, 0, 1).to(torch.float32).unsqueeze(0)
-    with torch.no_grad():
-        output = model.forward(im_model)
-        output = output.squeeze(0).permute(1, 2, 0).detach().numpy()
-        output = np.clip(output, a_min=0, a_max=1)
-    plt.imshow(output)
-    plt.savefig(os.path.join('debluring', 'forward_model.png'))
+    # model = get_model_param(param=PARAM)
+    # im_model = torch.tensor(blured_im, requires_grad=False).permute(2, 0, 1).to(torch.float32).unsqueeze(0)
+    # with torch.no_grad():
+    #     output = model.forward(im_model)
+    #     output = output.squeeze(0).permute(1, 2, 0).detach().numpy()
+    #     output = np.clip(output, a_min=0, a_max=1)
+    # plt.imshow(output)
+    # plt.savefig(os.path.join('debluring', 'forward_model.png'))
