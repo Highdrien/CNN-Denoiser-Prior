@@ -75,7 +75,7 @@
 
     On peut montrer que l'on peut approximer $\hat{x} = \displaystyle \min_x F(x)$ en itérant :
     $$x_{k+1} = p_L(x_k)$$
-    c'est-à-dire: $\hat{x} = \displaystyle \lim_{k \rightarrow \infty} x_{k+1}$
+    c'est-à-dire : $\hat{x} = \displaystyle \lim_{k \rightarrow \infty} x_{k+1}$
 
 \end{frame}
 
@@ -112,7 +112,7 @@
 % \section{Les systèmes de plug and play}
 \begin{frame}{Les systèmes de plug and play}
     \begin{exampleblock}{Définition}
-        Un système de plug and play, est un système qui pour un problème donné le résout
+        Un système de plug and play est un système qui pour un problème donné le résout
         avec à la fois une méthode d'optimisation et une méthode d'apprentissage.
     \end{exampleblock}
 
@@ -145,12 +145,35 @@
 
 
 % \section{Le Denoiser}
-\begin{frame}{Le Denoiser}
-    le model
+\begin{frame}{Denoiser}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{../paper/model.png}
+        \caption{Denoiser utilisé dans l'article}
+    \end{figure}
+    \begin{block}{Dans l'article}
+        Entraînement de 25 Denoiser avec un écart-type de bruit constant de $2k$ où $k\in [1, 25]$.
+    \end{block}
 \end{frame}
 
-\begin{frame}{Le Denoiser}
-    train et inférence
+\begin{frame}{Denoiser}
+    \begin{block}{Mon Denoiser}
+        modèle : 5 couches CNNs au lieu de 7. (dilatation de 1, 2, 3, 2, 1) sur des images en 
+        couleur de tailles : $64 \times 64$.
+
+        2 entraînements : 
+        \begin{itemize}
+            \item \textbf{Const}: appris sur un écart-type de bruit constant de 5,
+            image viennent d'un maxpooling d'image de $256 \times 256$. \\
+
+            \item \textbf{Rand}: appris sur un écart-type de bruit uniforme sur $[1, 20]$, 
+            image qui vienne d'un crop.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Denoiser}
+    résultat du test et images d'inférences des 2 Denoiser.
 \end{frame}
 
 \begin{frame}{Plug and play}
