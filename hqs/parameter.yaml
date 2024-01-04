@@ -9,9 +9,8 @@ noise:
   random_noise: true
 
 data:
-  datafrom: cnn\data\center_patches
-  num_data: 10
-  path: blured_data
+  datafrom: images/original
+  blured_path: images/blured
 
 cnn:
   logspath: cnn/logs/colab_0

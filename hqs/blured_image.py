@@ -3,16 +3,17 @@ import numpy as np
 from numpy import ndarray
 import matplotlib.pyplot as plt
 from PIL import Image
-from typing import Tuple, Optional
+from typing import Tuple
 from easydict import EasyDict
+import skimage.measure
 
 from pylops.signalprocessing import Convolve2D
 from get_parameter import load_parameter
 
 
-def get_image(image_path: str, image_size: Optional[int]=265) -> ndarray:
+def get_image(image_path: str) -> ndarray:
     image = np.array(Image.open(image_path), dtype=np.float32)
-    image = image[:image_size, :image_size, :]
+    image = np.array(skimage.measure.block_reduce(image, (4, 4, 1), np.max))
     return image / 255
 
 
@@ -47,7 +48,7 @@ def bluring_process(image: ndarray, H: Convolve2D, sigma: int) -> ndarray:
     return blured_image
 
 
-def plot_image(original_im: ndarray, degraded_im: ndarray, title: Optional[str]='Image dégradée') -> None:
+def plot_image(original_im: ndarray, degraded_im: ndarray, title: str='Image dégradée') -> None:
     plt.subplot(1, 2, 1)
     plt.imshow(original_im, vmin=0, vmax=1)
     plt.title("Image originale")
@@ -61,11 +62,7 @@ def plot_image(original_im: ndarray, degraded_im: ndarray, title: Optional[str]=
 
 def save_blured_images_from_param(param: EasyDict) -> None:
     np.random.seed(0)
-    files = os.listdir(param.data.datafrom)[-param.data.num_data:]
-
-    dst_folder = param.data.path
-    if not os.path.exists(dst_folder):
-        os.makedirs(dst_folder)
+    files = os.listdir(param.data.datafrom)
 
     h = blurring_gaussion_operator(hdim=param.filter.size,
                                    epsilon=param.filter.epsilon)
@@ -73,8 +70,7 @@ def save_blured_images_from_param(param: EasyDict) -> None:
     H = get_H(h=h, image_shape=param.image_shape)
 
     for filename in files:
-        image = get_image(image_path=os.path.join(param.data.datafrom, filename),
-                          image_size=param.image_shape[0])
+        image = get_image(image_path=os.path.join(param.data.datafrom, filename))
         
         if param.noise.random_noise:
             sigma = np.random.randint(low=1, high=param.noise.sigma)
@@ -85,10 +81,10 @@ def save_blured_images_from_param(param: EasyDict) -> None:
         blured_image = bluring_process(image=image, H=H, sigma=sigma)
         blured_image = np.clip(blured_image, a_min=0, a_max=1)
 
-        dst_path = os.path.join(dst_folder, filename)[:-4]
+        dst_path = os.path.join(param.data.blured_path, filename)[:-4]
 
-        np.save(f'{dst_path}_real', image) 
-        np.save(f'{dst_path}_blured', blured_image)
+        np.save(dst_path, blured_image)
+
 
 
 
