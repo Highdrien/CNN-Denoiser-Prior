@@ -10,7 +10,7 @@
 
 \hypersetup{
     colorlinks=true,
-    linkcolor=blue,
+    linkcolor=black,
     filecolor=magenta,      
     urlcolor=blue,
 }
@@ -25,14 +25,14 @@
 
 \maketitle
 
-% --- Probleme ---
-\begin{frame}{Le Probleme inverse}
+% \section{Introduction}
+\begin{frame}{Le Problème inverse}
     \begin{block}{But}
         On a une image observée dégradée $y$ et l'on veut retrouver l'image d'origine $x$. On sait 
         que cette image a été dégradée de la façon suivante : 
         $$y = Hx + v$$
         où $H$ est la matrice de 
-        dégradation que l'on connait, et $v$ est un bruit gaussien d'écart-type $\sigma$ inconnue.
+        dégradation que l'on connait, et $v$ est un bruit gaussien d'écart-type $\sigma$ inconnu.
     \end{block}
     \begin{figure}[b]
         \centering
@@ -42,12 +42,12 @@
         \end{tikzpicture}
         \hspace{1cm}
         \includegraphics[width=0.41\textwidth]{../debluring/y.png}
-        \caption{image d'orignine x (à gauche) et l'image dégradée y (à droite).}
+        \caption{image d'origine x (à gauche) et l'image dégradée y (à droite).}
     \end{figure}
 \end{frame}
 
 
-\begin{frame}{Maximiser la log likelihood}
+\begin{frame}{Maximiser la log-likelihood}
     \begin{visibleenv}<1->
         \begin{align*}
             \max_x \log(p(x|y)) &= \max_x \log(p(x, y)) \quad \text{car } p(x|y) = p(x, y) \times p(y) \\
@@ -60,39 +60,45 @@
 
     \begin{visibleenv}<2->
         \begin{alertblock}{But}
-            On veut donc trouver $\hat{x}$ tel que: $\hat{x} = \text{arg} \min_x \frac{1}{2} \lVert y-Hx \rVert ^2 + \lambda \Phi(x)$
+            On veut donc trouver $\hat{x}$ tel que : $\hat{x} = \text{arg} \displaystyle \min_x \frac{1}{2} \lVert y-Hx \rVert ^2 + \lambda \Phi(x)$
         \end{alertblock}
     \end{visibleenv}
 \end{frame}
 
-\begin{frame}{Une première méthode: ISTA}
-    On veut minimizer: $F(x) = f(x) + g(x)$ avec $f=\frac{1}{2}\lVert y - H \rVert ^2$ et $g=\lambda \Phi$
-    
-    On prend $L$ la constante de Lipschitz de $f$.
+% \section{Les méthodes d'optimisation}
+\begin{frame}{Une première méthode : ISTA}
+    On veut minimiser : $F = f + g$ avec $f$ dérivable et $g$ pas forcément continue.
+    % avec $f(x)=\frac{1}{2}\lVert y - Hx \rVert ^2$ et $g(x)=\lambda \Phi(x)$
+    On pose $L$ la constante de Lipschitz de $f$.
 
-    On pose $$ p_L(y) = \arg \max_x \Bigg\{ g(x) + \frac{L}{2} \Big\lVert x - \Big(y - \frac{1}{L} \nabla f(y)\Big) \Big\rVert ^2 \Bigg\}$$
+    En posant $p_L$ tel que : $$ p_L(y) = \arg \max_x \Bigg\{ g(x) + \frac{L}{2} \Big\lVert x - \Big(y - \frac{1}{L} \nabla f(y)\Big) \Big\rVert ^2 \Bigg\}$$
+
+    On peut montrer que l'on peut approximer $\hat{x} = \displaystyle \min_x F(x)$ en itérant :
+    $$x_{k+1} = p_L(x_k)$$
+    c'est-à-dire: $\hat{x} = \displaystyle \lim_{k \rightarrow \infty} x_{k+1}$
+
 \end{frame}
 
-\begin{frame}{Une deuxième méthode: Half Quadratic Splitting (HQS)}
+\begin{frame}{Une deuxième méthode : Half Quadratic Splitting (HQS)}
     \begin{visibleenv}<1->
         \begin{exampleblock}{Idée}
             Diviser la variable $x$ pour découpler le terme de fidélité et le terme de régularisation.
         \end{exampleblock}
     \end{visibleenv}
     \begin{visibleenv}<2->
-        On a l'équivalence entre:
+        On a l'équivalence entre :
         $$ \min_x \frac{1}{2}\lVert y-Hx \rVert^2 + \lambda \Phi(x) $$
         $$ \Leftrightarrow \min_{x, z} \frac{1}{2}\lVert y-Hx \rVert ^2 + \lambda \Phi(z) \quad \text{tel que} \quad  z=x$$
-        En rajoutant un parametre $\mu$:
+        En rajoutant un paramètre $\mu$:
         $$ \Leftrightarrow \min_{x, z, \mu}  \frac{1}{2}\lVert y-Hx \rVert ^2+\lambda \Phi(z) + \frac{\mu}{2}\lVert z-x \rVert ^2 $$
-        On appele $\mathcal{L}_{\mu}(x,z)$, le terme que l'on doit minimizer.
+        On appelle $\mathcal{L}_{\mu}(x,z)$, le terme que l'on doit minimiser.
     \end{visibleenv}
 \end{frame}
 
-\begin{frame}{Une deuxième méthode: Half Quadratic Splitting (HQS)}
-    Comme $\mathcal{L}_{\mu}(x,z)$ est décroissante (pour les variable $x$ et $z$), on a:
-    $$\min_{x, z} \mathcal{L}_{\mu}(x,z) = \lim_{k \rightarrow \infty} \min_z \min_x \min_z \dots \min_x \mathcal{L}_{\mu}(x,z)$$
-    On peut alors trouver le minimun sur $x$ et $z$ en itérant :
+\begin{frame}{Une deuxième méthode : Half Quadratic Splitting (HQS)}
+    On va approximer $\displaystyle \min_{x, z} \mathcal{L}_{\mu}$ par :
+    $$ \lim_{k \rightarrow \infty} \min_z \min_x \min_z \dots \min_x \mathcal{L}_{\mu}(x,z)$$
+    On peut alors trouver le minimum sur $x$ et $z$ en itérant :
     \begin{equation*}
         \left\{
         \begin{aligned}
@@ -103,34 +109,66 @@
     \end{equation*}
 \end{frame}
 
-
+% \section{Les systèmes de plug and play}
 \begin{frame}{Les systèmes de plug and play}
-    en quoi ça consiste
+    \begin{exampleblock}{Définition}
+        Un système de plug and play, est un système qui pour un problème donné le résout
+        avec à la fois une méthode d'optimisation et une méthode d'apprentissage.
+    \end{exampleblock}
+
+    L'article propose de résoudre les 2 équations de la HQS comme ceci :
+    \begin{equation*}
+        \left\{
+        \begin{aligned}
+            & x_{k+1} = \arg \min_x \quad \lVert y - Hx \rVert^2 + \mu \lVert z_k - x \rVert^2 &  \rightarrow \text{calcule de gradient}\\
+            & z_{k+1} = \arg \min_z \quad \frac{\mu}{2}\lVert z - x_{k+1} \rVert^2 + \lambda \Phi(z) & \rightarrow \text{Denoiser (CNNs)}
+        \end{aligned}
+        \right.
+    \end{equation*}
 \end{frame}
 
+
+\begin{frame}{Les systèmes de plug and play}
+    \textbf{Pour $x_{k+1}$} :
+    \begin{align*}
+        & x_{k+1} = \arg \min_x \quad \lVert y - Hx \rVert ^2 + \mu \lVert z_k - x \rVert ^2 \\
+        & \Leftrightarrow x_{k+1} = (H^TH + \mu I)^{-1} (H^Ty + \mu z_k)
+    \end{align*}
+
+    \textbf{Pour $z_{k+1}$} :
+    \begin{align*}
+        & z_{k+1} = \arg \min_z \quad \frac{\mu}{2}\lVert z - x_{k+1} \rVert^2 + \lambda \Phi(z) \\
+        & \Leftrightarrow z_{k+1} = \arg \min_z \quad \frac{1}{2 (\sqrt{\lambda / \mu}) ^2}\lVert z - x_{k+1} \rVert^2 + \Phi(z) \\
+        & \Leftrightarrow z_{k+1} = Denoiser(x_{k+1}, \sqrt{\lambda / \mu})
+    \end{align*}
+\end{frame}
+
+
+% \section{Le Denoiser}
 \begin{frame}{Le Denoiser}
     le model
 \end{frame}
 
 \begin{frame}{Le Denoiser}
-    train et inférance
+    train et inférence
 \end{frame}
 
 \begin{frame}{Plug and play}
     résultats
 \end{frame}
 
-\begin{frame}{Référances}
+\begin{frame}{Références}
     \begin{itemize}
         \item \textbf{acticle:} Kai Zhang, Wangmeng Zuo, Shuhang Gu and Lei Zhang, 
             \textit{Learning Deep {CNN} Denoiser Prior for Image Restoration}.
             \url{http://arxiv.org/abs/1704.03264}
         \item \textbf{FISTA:} Amir Beck and Marc Teboulle, \textit{A Fast Iterative Shrinkage-Thresholding 
         Algorithm for Linear Inverse Problems}. \url{https://www.ceremade.dauphine.fr/~carlier/FISTA}
-        \item \textbf{Lien de mon implémentation:} \url{https://github.com/Highdrien/CNN-Denoiser-Prior}
+        \item \textbf{Lien de mon implémentation :} \url{https://github.com/Highdrien/CNN-Denoiser-Prior}
     \end{itemize}
     
 \end{frame}
 
 
 \end{document}
+
