@@ -15,10 +15,10 @@ sys.path.append(up(up(os.path.abspath(__file__))))
 from src.model import get_model
 
 
-def load_blured_image(data_path: str) -> torch.Tensor:
-    datas_path = list(map(lambda x: os.path.join(data_path, x), os.listdir(data_path)))
+def load_blured_image(data_path: List[str]) -> torch.Tensor:
+    # datas_path = list(map(lambda x: os.path.join(data_path, x), os.listdir(data_path)))
     data = []
-    for path in datas_path:
+    for path in data_path:
         data.append(np.load(path))
     data = np.array(data)
     data = np.transpose(data, (0, 3, 1, 2))
@@ -54,12 +54,17 @@ def infer(config: EasyDict, logging_path: str, data_path: str) -> None:
         device = torch.device("cuda")
     else:
         device = torch.device("cpu")
-    ic(device)
+
+    blured_data_path = os.path.join(data_path, f'{config.name}_blured')
+    if not os.path.exists(blured_data_path):
+        code = f'\n python .\main.py --mode bluring --path .\logs\{config.name} \n'
+        raise FileNotFoundError(f"the folder {blured_data_path} wasn't found. You probably have to run:{code}")
+    npy_data_path = list(filter(lambda x: '.npy' in x, os.listdir(blured_data_path)))
+    complet_data_path = list(map(lambda x: os.path.join(blured_data_path, x), npy_data_path))
 
     # Get data
-    x = load_blured_image(os.path.join(data_path, 'blured'))
+    x = load_blured_image(complet_data_path)
     x = x.to(device)
-    ic(x.shape)
 
     # Get model
     model = get_model(config)
@@ -67,17 +72,15 @@ def infer(config: EasyDict, logging_path: str, data_path: str) -> None:
     checkpoint_path = os.path.join(logging_path, 'checkpoint.pt')
     assert os.path.isfile(checkpoint_path), f'Error: model weight was not found in {checkpoint_path}'
     model.load_state_dict(torch.load(checkpoint_path, map_location=device))
-    ic(model)
 
     with torch.no_grad():
         model.eval()
         y = model.forward(x)
         y = y.clamp(min=0, max=1)
-    ic(y.shape)
 
     save_results(y=y,
-                 dst_path=os.path.join(data_path, f'infer_{config.name}'),
-                 filesname=os.listdir(os.path.join(data_path, 'blured')))
+                 dst_path=os.path.join(data_path, f'{config.name}_infer'),
+                 filesname=npy_data_path)
     
 
 if __name__ == '__main__':

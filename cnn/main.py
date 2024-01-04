@@ -8,6 +8,7 @@ from typing import Optional
 from src.train import train
 from src.test import test
 from src.infer import infer
+from src.blured_image import blured_images
 from src.dataloader import create_generator, plot_image_and_blured
 
 
@@ -30,7 +31,7 @@ def find_config(experiment_path: str) -> str:
     
     exit()
 
-IMPLEMENTED = ['train', 'data', 'test', 'infer']
+IMPLEMENTED = ['train', 'data', 'test', 'infer', 'bluring']
 
 def main(options: dict) -> None:
 
@@ -62,8 +63,14 @@ def main(options: dict) -> None:
 
         config_path = find_config(experiment_path=options['path'])
         config = load_config(config_path)
-        ic(config)
         infer(config=config, logging_path=options['path'], data_path=options['data_path'])
+    
+    if options['mode'] == 'bluring':
+        assert options['path'] is not None, 'Error, please enter the path of your experimentation that you want to test'
+
+        config_path = find_config(experiment_path=options['path'])
+        config = load_config(config_path)
+        blured_images(config=config, data_path=options['data_path'])
 
 
 if __name__ == "__main__":
