@@ -7,6 +7,7 @@
 \usepackage{subcaption}
 \usepackage{tikz}
 \usepackage{hyperref}
+\setbeamertemplate{footline}[frame number]
 
 \hypersetup{
     colorlinks=true,
@@ -50,11 +51,11 @@
 \begin{frame}{Maximiser la log-likelihood}
     \begin{visibleenv}<1->
         \begin{align*}
-            \max_x \log(p(x|y)) &= \max_x \log(p(x, y)) \quad \text{car } p(x|y) = p(x, y) \times p(y) \\
-            &= \max_x \log(p(y|x)) + \log(p(x)) \\
+            \text{arg} \max_x \log(p(x|y)) &= \text{arg} \max_x \log(p(x, y)) \quad \text{car } p(x|y) = \frac{p(x, y)}{p(y)} \\
+            &= \text{arg} \max_x \log(p(y|x)) + \log(p(x)) \\
             &\quad \text{or } (y|x) = (v+Hx|x) \sim \mathcal{N}(Hx, \sigma^2) \\
-            &= \max_x -\frac{\lVert y-Hx \rVert ^2}{2 \sigma^2} + \log(p(x)) \\
-            &= \min_x \frac{1}{2}\lVert y-Hx \rVert ^2 + \lambda \Phi(x) \quad \text{avec } \Phi = -\frac{\log \circ p}{\lambda}
+            &= \text{arg} \max_x -\frac{\lVert y-Hx \rVert ^2}{2 \sigma^2} + \log(p(x)) \\
+            &= \text{arg} \min_x \frac{1}{2}\lVert y-Hx \rVert ^2 + \lambda \Phi(x) \quad \text{avec } \Phi = -\frac{\log \circ p}{\lambda}
         \end{align*}
     \end{visibleenv}
 
@@ -94,7 +95,7 @@
         $$ \min_x \frac{1}{2}\lVert y-Hx \rVert^2 + \lambda \Phi(x) $$
         $$ \Leftrightarrow \min_{x, z} \frac{1}{2}\lVert y-Hx \rVert ^2 + \lambda \Phi(z) \quad \text{tel que} \quad  z=x$$
         En rajoutant un paramètre $\mu$:
-        $$ \Leftrightarrow \min_{x, z, \mu}  \frac{1}{2}\lVert y-Hx \rVert ^2+\lambda \Phi(z) + \frac{\mu}{2}\lVert z-x \rVert ^2 $$
+        $$ \Leftrightarrow \min_{x, z}  \frac{1}{2}\lVert y-Hx \rVert ^2+\lambda \Phi(z) + \frac{\mu}{2}\lVert z-x \rVert ^2 $$
         On appelle $\mathcal{L}_{\mu}(x,z)$, le terme que l'on doit minimiser.
     \end{visibleenv}
 \end{frame}
@@ -257,7 +258,7 @@
         \includegraphics[width=0.30\textwidth]{../images/hqs_original/0823.png}
         \includegraphics[width=0.30\textwidth]{../images/hqs_constant/y.png}
         \includegraphics[width=0.30\textwidth]{../images/hqs_constant/z_9.png}
-        \caption{image d'origine x (à gauche), l'image dégradée y (eu centre) et image de $z_10$ (à droite).}
+        \caption{image d'origine x non bruitée (à gauche), l'image dégradée y (au centre) et image de $z_{10}$ (à droite).}
     \end{figure}
 \end{frame}
 
