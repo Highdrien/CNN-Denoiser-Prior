@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     # Options
     parser.add_argument('--mode', default=None, type=str,
-                        help="choose a mode between 'train', 'data'")
+                        help=f"choose a mode between {IMPLEMENTED}")
     parser.add_argument('--config_path', default=os.path.join('config', 'config.yaml'), type=str,
                         help="path to config (for training)")
     parser.add_argument('--path', type=str,
