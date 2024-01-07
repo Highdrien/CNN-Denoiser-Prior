@@ -49,7 +49,7 @@
 
 
 \begin{frame}{Maximiser la log-likelihood}
-    \begin{visibleenv}<1->
+    % \begin{visibleenv}<1->
         \begin{align*}
             \text{arg} \max_x \log(p(x|y)) &= \text{arg} \max_x \log(p(x, y)) \quad \text{car } p(x|y) = \frac{p(x, y)}{p(y)} \\
             &= \text{arg} \max_x \log(p(y|x)) + \log(p(x)) \\
@@ -57,13 +57,13 @@
             &= \text{arg} \max_x -\frac{\lVert y-Hx \rVert ^2}{2 \sigma^2} + \log(p(x)) \\
             &= \text{arg} \min_x \frac{1}{2}\lVert y-Hx \rVert ^2 + \lambda \Phi(x) \quad \text{avec } \Phi = -\frac{\log \circ p}{\lambda}
         \end{align*}
-    \end{visibleenv}
+    % \end{visibleenv}
 
-    \begin{visibleenv}<2->
+    % \begin{visibleenv}<2->
         \begin{alertblock}{But}
             On veut donc trouver $\hat{x}$ tel que : $\hat{x} = \text{arg} \displaystyle \min_x \frac{1}{2} \lVert y-Hx \rVert ^2 + \lambda \Phi(x)$
         \end{alertblock}
-    \end{visibleenv}
+    % \end{visibleenv}
 \end{frame}
 
 % \section{Les méthodes d'optimisation}
@@ -116,20 +116,24 @@
 
 % \section{Les systèmes de plug and play}
 \begin{frame}{Les systèmes de plug and play}
-    \begin{exampleblock}{Définition}
-        Un système de plug and play est un système qui, pour un problème donné, le résout
-        à la fois avec une méthode d'optimisation et avec une méthode d'apprentissage.
-    \end{exampleblock}
+    \begin{visibleenv}<1->
+        \begin{exampleblock}{Définition}
+            Un système de plug and play est un système qui, pour un problème donné, le résout
+            à la fois avec une méthode d'optimisation et avec une méthode d'apprentissage.
+        \end{exampleblock}
+    \end{visibleenv}
 
-    L'article propose de résoudre les 2 équations de la HQS comme ceci :
-    \begin{equation*}
-        \left\{
-        \begin{aligned}
-            & x_{k+1} = \arg \min_x \quad \lVert y - Hx \rVert^2 + \mu \lVert z_k - x \rVert^2 &  \rightarrow \text{calcul de gradient}\\
-            & z_{k+1} = \arg \min_z \quad \frac{\mu}{2}\lVert z - x_{k+1} \rVert^2 + \lambda \Phi(z) & \rightarrow \text{Denoiser (CNNs)}
-        \end{aligned}
-        \right.
-    \end{equation*}
+    \begin{visibleenv}<2->
+        L'article propose de résoudre les 2 équations de la HQS comme ceci :
+        \begin{equation*}
+            \left\{
+            \begin{aligned}
+                & x_{k+1} = \arg \min_x \quad \lVert y - Hx \rVert^2 + \mu \lVert z_k - x \rVert^2 &  \rightarrow \text{calcul de gradient}\\
+                & z_{k+1} = \arg \min_z \quad \frac{\mu}{2}\lVert z - x_{k+1} \rVert^2 + \lambda \Phi(z) & \rightarrow \text{Denoiser (CNNs)}
+            \end{aligned}
+            \right.
+        \end{equation*}
+    \end{visibleenv}
 \end{frame}
 
 
@@ -272,11 +276,19 @@
 \end{frame}
 
 \begin{frame}{Plug and play : les résultats de l'article}
-    Parler des résultats qu'ont obtenus les auteurs de l'article. (diapo pas encore faite)
+    \begin{figure}[b]
+        \centering
+        \includegraphics[width=\textwidth]{../paper/experiments.png}
+        \caption{Exprérience de l'article}
+    \end{figure}
 \end{frame}
 
 \begin{frame}{Plug and play : continue}
-    Parler rapidement de la v2 du papier avec U-net (diapo pas encore faite)
+    \begin{figure}[b]
+        \centering
+        \includegraphics[width=\textwidth]{../paper/model_v2.png}
+        \caption{Modèle U-net de la version 2 du papier}
+    \end{figure}
 \end{frame}
 
 % \section{Références}
