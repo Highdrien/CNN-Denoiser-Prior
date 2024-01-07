@@ -74,7 +74,7 @@
 
     En posant $p_L$ tel que : $$ p_L(y) = \arg \max_x \Bigg\{ g(x) + \frac{L}{2} \Big\lVert x - \Big(y - \frac{1}{L} \nabla f(y)\Big) \Big\rVert ^2 \Bigg\}$$
 
-    On peut montrer qu'il est possible d'approximer $\hat{x} = \displaystyle \min_x F(x)$ en itérant :
+    On peut montrer qu'il est possible d'approximer $\hat{x} = \text{arg} \displaystyle \min_x F(x)$ en itérant :
     $$x_{k+1} = p_L(x_k)$$
     c'est-à-dire : $\hat{x} = \displaystyle \lim_{k \rightarrow \infty} x_{k+1}$
 
