@@ -14,3 +14,16 @@ Le dossier `data` contient:
 
 Le modèle utilisé est une suscétion de CNN avec des filtres $3\times3$ et diférentes taille de dilatation. Le modèle proposé par l'article contient la sucésion $[1, 2, 3, 4, 3, 2, 1]$ (de taille de dilatation). J'ai entraîné un modèle un peu plus petit avec $[1, 2, 3, 2, 1]$. Ce modèle se nome: `little_model`.
 
+## Utilisation
+
+Se mettre dans `\cnn` et faire
+```bash
+python main.py --mode <yout_mode> --path <logs/your experiment folder>
+```
+
+Vous avez les modes suivant:
+- `train`: sert à entrainer un nouveau modèle, selon la config: `\config\config.yaml`. Va créer un dossier dans `\logs` avec les poids du modèle, les métriques, ... Il n'y a pas besoin de spécifier un `--path`
+- `test`: fait passer un modèle déjà entraîner sur la base de données de test. \\ Exemple: `path main.py --test --path logs/cosntant` pour tester le modèle constant.
+- `bluring`: pour créer les images bruitées selon une config. Crée un dossier `..\images\<experiment_name>_blured` avec les images bruitées.
+- `infer`: fait l'inférence sur les images bruitées. Crée un dossier `..\images\<experiment_name>_infer` avec les images débruitées.
+
